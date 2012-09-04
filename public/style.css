@@ -312,3 +312,369 @@ body {
  #term {
    margin:20px;
  }
+
+
+
+ body {
+    background-color:#f8f8f8;
+    font-family:helvetica;
+    margin:0px;
+    padding:0px;
+  }
+
+  form {
+    margin:60px;
+    padding:30px;
+    border:5px #ccc dashed;
+    border-radius:5px;
+    width:400px;
+    background-color:#ffffff;
+  }
+  a:link, a:visited {
+    color:#333;
+  }
+
+  form h2 {
+    margin-bottom:30px;
+  }
+
+  input {
+    width:350px;
+    padding:5px;
+    margin:10px;
+    height:20px;
+    font-size:16px;
+    display:block;
+  }
+
+
+  p {
+    font-size:16px;
+  }
+  .right {
+    float:right;
+    width:35%;
+  }
+  .left {
+    width:60%;
+  }
+  a {
+    color:#333;
+    text-decoration:underline;
+  }
+  .load-event, .content { 
+    border-radius:5px;
+    background-color:#fff;
+    border:#fc9 3px dashed;
+    padding:20px;
+    margin:20px;
+    min-height:80px;
+  }
+  .load-pad {
+    float:left;
+    border:#fc0 1px solid;
+    padding:10px;
+    border-radius:5px;
+  }
+  label {
+    display:block;
+  }
+  .another {
+    background-color:#fff;
+    border-radius:5px;
+    border:#fc0 1px solid;
+    padding:10px;
+    width:200px;
+    text-align:center;
+    cursor:pointer;
+  }
+  textarea {
+    height:200px;
+    width:600px;
+  }
+
+  .tweet {
+    padding:30px;
+    border:5px #ccc dashed;
+    border-radius:5px;
+    margin-bottom:60px;
+    height:160px;
+    clear:both;
+  }
+  .tweet .media {
+    width:240px;
+    float:right;
+  }
+  .media a {
+    display:block;
+  }
+  .tweet .meta {
+    width:160px;
+    float:left;
+    height:160px;
+    font-size:11px;
+    margin:15px 30px 15px 0px;
+  }
+  .tweet .meta img {
+    float:left;
+    margin-right:15px;
+  }
+  .meta .block {
+    display:block;
+  }
+  .tweet .text {
+    width:640px;
+
+  }
+  .tweet .media img {
+    display:block;
+    height:120px;
+    margin:20px;
+    box-shadow:5px 5px 10px rgba(0,0,0,.25);
+  }
+
+
+
+  .button {
+    font-size:24px;
+    background-color:#fff;
+    border:5px solid #fc3;
+    border-radius:5px;
+    margin-top:5px;
+    padding:12px 20px 12px 20px;
+    width:40px;
+  }
+  .next-prev {
+    display:block;
+    height:20px;
+  }
+
+  .prev {
+    float:left;
+  }
+
+  .next {
+    float:right;
+    text-align:right;
+  }
+
+  #mosaic-container {
+    background-color:#111;
+    padding:0px;
+    margin:0px;
+    width:100%;
+    height:100%;
+
+  }
+  #bigpic {
+    display:none;
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:50px;
+    left:0px;
+    z-index:1000;
+  }
+  #bigpic img {
+    margin-left:auto;
+    margin-right:auto;
+    border:20px #111 solid;
+    border-radius:20px;
+     box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+     -moz-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+     -webkit-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+
+  }
+
+  #more {
+    color:#fff;
+    cursor:pointer;
+  }
+  #mosaic-container #header {
+    position:fixed;
+    height:20px;
+    padding-left:20px;
+    padding-top:5px;
+    background-color:#000;
+    width:1000px;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.80);
+    z-index:100;
+
+  }
+
+ #header a:link, 
+ #header a:visited {
+   color:#fff;
+   font-weight:bold;
+ }
+
+ #header a:active, 
+ #header a:hover {
+   color:#fc3;
+ }
+
+
+
+
+  #mosaic-container #header h1 {
+    color:#fff;
+    font-size:16px;
+    display:inline;
+  }
+  h1.yellow {
+    color:#fc3;
+  }
+
+  #mosaic {
+   padding:0px;
+   margin:0px;
+   width:1020px;
+   height:100%;
+   min-height:1200px;
+   padding-bottom:400px;
+  }
+  #mosaic .grid {
+    width:340px;
+    float:left;
+  }
+  #mosaic .video {
+    height:425px;
+    width:350px;
+  }
+  #mosaic .grid img.tile {
+    width:340px;
+  }
+
+
+
+  #mosaic .overlay {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:300px;
+    padding:20px;
+    background-color:#111;
+    display:none;
+    cursor:pointer;
+  }
+
+  #mosaic .overlay{
+    color:#f8f8f8;
+  }
+
+  #mosaic .grid a:link,
+  #mosaic .grid a:visited {
+    color:#fff;
+    text-decoration:none;
+  }
+
+  #mosaic .grid a:hover,
+  #mosaic .grid a:active {
+    color:#ffc;
+    text-decoration:underline;
+  }
+
+  #mosaic .grid .user {
+    font-size:16px;
+  }
+  #mosaic .grid .date {
+
+  }
+
+  #mosaic .grid .text {
+    font-size:24px;
+    color:#fff;
+  }
+
+
+ .about {
+    background-color:#f8f8f8;
+    padding-left:40px !important;
+    width:980px !important;
+  }
+  
+  .campaigns {
+    padding-top:60px !important;
+    background-color:#f8f8f8;
+    padding-left:40px !important;
+    width:980px !important;
+  }
+  
+  .campaign {
+    width:480px;
+    float:left;
+  }
+  .campaign .name {
+    text-align:center;
+  }
+  .campaign .photo {
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .campaign .photo img {
+    height:240px;
+  }
+  .campaign .description {
+    padding:20px;
+  }
+ .bigger {
+   font-size:20px;
+ }
+
+
+  /**** Isotope Filtering ****/
+
+  .isotope-item {
+    z-index: 2;
+  }
+
+  .isotope-hidden.isotope-item {
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /**** Isotope CSS3 transitions ****/
+  .isotope,
+  .isotope .isotope-item {
+    -webkit-transition-duration: 0.4s;
+       -moz-transition-duration: 0.4s;
+        -ms-transition-duration: 0.4s;
+         -o-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+  }
+  .isotope {
+    -webkit-transition-property: height, width;
+       -moz-transition-property: height, width;
+        -ms-transition-property: height, width;
+         -o-transition-property: height, width;
+            transition-property: height, width;
+  }
+
+  .isotope .isotope-item {
+    -webkit-transition-property: opacity;
+       -moz-transition-property: opacity;
+        -ms-transition-property: opacity;
+         -o-transition-property: opacity;
+            transition-property: opacity;
+  }
+  /**** disabling Isotope CSS3 transitions ****/
+
+  .isotope.no-transition,
+  .isotope.no-transition .isotope-item,
+  .isotope .isotope-item.no-transition {
+    -webkit-transition-duration: 0s;
+       -moz-transition-duration: 0s;
+        -ms-transition-duration: 0s;
+         -o-transition-duration: 0s;
+            transition-duration: 0s;
+  }
+
+  #infscr-loading {
+
+  }
+
+  #term {
+    margin:20px;
+  }
