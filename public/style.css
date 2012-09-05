@@ -603,8 +603,9 @@ body {
   }
   
   .campaign {
-    width:480px;
+    width:420px;
     float:left;
+    overflow:hidden;
   }
   .campaign .name {
     text-align:center;
@@ -612,9 +613,11 @@ body {
   .campaign .photo {
     text-align:center;
     margin-bottom:20px;
+    
   }
   .campaign .photo img {
     height:240px;
+    box-shadow:5px 5px 10px rgba(0,0,0,.25);
   }
   .campaign .description {
     padding:20px;

@@ -25,7 +25,7 @@ end
 
 
 #temporarily disable yfrog - images need correct dimensions
-get '/+?:campaign?' do
+get '/c/.?:campaign?' do
   m = Mosaic.new
   m.campaign = params[:campaign]
   m.page_size = 30

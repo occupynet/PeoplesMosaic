@@ -1,15 +1,12 @@
-%div#mosaic-container
-  %div#header
-    header
-  %div#mosaic.campaigns
-    - @campaigns.each do |campaign|
-      %div.campaign
-        %div.photo
-          %a{:href=>campaign.slug}
-            %img{:src=>campaign.cover_image}
-        %div.name
-          %a{:href=>campaign.slug} 
-            = campaign.name
-        %div.description
-          = campaign.description
-    
+%div#mosaic.campaigns
+  - @campaigns.each do |campaign|
+    %div.campaign
+      %div.photo
+        %a{:href=>'/c/'<<campaign.slug}
+          %img{:src=>campaign.cover_image}
+      %div.name
+        %a{:href=>'/c/'<<campaign.slug} 
+          = campaign.name
+      %div.description
+        = campaign.description
+  

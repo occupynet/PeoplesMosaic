@@ -27,14 +27,40 @@ end
 
 #a homepage of mosaics, with a representative image (pinterest style :/ )
 get '/' do
-  @campaigns = Campaign.all({:order=>'conditions.start_time'.to_sym.asc})
+  @campaigns = Campaign.all({:order=>'conditions.start_time'.to_sym.desc})
   haml :index
 end
+#create campaigns with conditions
+  #silentmarch
 #copy all other dbs to this one
   #ows - chicagonato
   #ows - quebec
+    # var cc = db.ows_tweets.find({timestamp:{$gte:1337957315}}) lte june 1
+  
   #backtrace - silentmarch
-  #local - n17
+    # var sm = db.backtrace_tweets.find({timestamp:{$lte:1339973978},timestamp:{$gte:1339648208}})
+  #local - n17 gte 1321106576
+    #> var nt = db.crawled_tweets.find({timestamp:{$lte:1321797776}})
+  
+#copy tweets to campaigns_tweets collection which match photo conditions
+
+
+#tomorrow
+  #campaign interface
+  #add / edit campaign
+    #name
+    #description
+    #start_time
+    #end_time
+    #ordering
+    #media 
+      #text, video, picture
+    #terms
+      #twitter only, for now
+      
   
 
+  
+#get / vs /campaign working
+#deploy to backtrace for staging
 
