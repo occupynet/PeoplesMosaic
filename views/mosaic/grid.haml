@@ -13,12 +13,13 @@
       %div#thumbnails{:style=>"height:0px; width:0px"}
         %img{:src=>"/images/thumbnails.jpg", :style=>"height:0px; width:0px"}
       %div#header
-        %h1 #Occupy
-        %h1{:style=>"color:#fc3"}Mosaic
+        %a{:href=>"/"}
+          %h1 #Occupy
+          %h1{:style=>"color:#fc3"}Mosaic
         %div{:style=>"float:right"}
-          %h1  
-          %a{:href=>"/chicagonato"}#NoNATO
-          %a{:href=>"/mayday"}#MayDay
+        
+          %h1
+            =@meta[:page_title]
           %a{:href=>"/about"}About
       %div#bigpic
         %img{:src=>""}

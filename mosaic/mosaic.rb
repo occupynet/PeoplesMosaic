@@ -8,11 +8,9 @@ class Mosaic
       camp = Campaign.first(:slug=>@campaign)
     end
     #get our Campaign object
-    puts camp.inspect 
     @conditions = {:limit=>@page_size, :skip=>skip * @page_size,:order=>:timestamp.asc, :conditions=>{'entities.media.0.media_url'=>{:$exists=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true}, 'entities.urls.0.expanded_url'=>{'$not'=>/yfrog/}, :timestamp=>{'$gte'=>camp['conditions']['start_time'].to_i,'$lte'=>camp['conditions']['end_time'].to_i},:block=>{:$exists=>false}}}
     @meta_info = {:page_title => camp['page_title'], :description => camp['description']}
    #return all crawled tweets with conditions c
-   puts @conditions.inspect
    Tweet.all(@conditions)
   end
 end
@@ -25,7 +23,7 @@ end
 
 
 #temporarily disable yfrog - images need correct dimensions
-get '/c/.?:campaign?' do
+get '/:campaign' do
   m = Mosaic.new
   m.campaign = params[:campaign]
   m.page_size = 30

@@ -4,9 +4,10 @@ $(document).ready(function(){
   $(".mosaic").first().addClass("infinite-scrolling");
  
 
-  $("#bigpic").click(function(){
-    $(this).toggle();
-  })
+  $("#bigpic").click(function(e){
+    e.stopPropagation();
+    $(this).fadeOut('fast');
+  });
     var setOverlays = function(el){
       $(el).find(".grid").unbind('hover') ;
       $(el).find(".overlay").unbind('click');
