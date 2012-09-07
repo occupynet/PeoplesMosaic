@@ -5,8 +5,10 @@ require 'twitter'
 require 'hpricot'
 require 'haml'
 require 'open-uri'
-require 'config.rb'
+require 'time'
+require 'mm-sluggable'
 
+require 'config.rb'
 #require 'crawler/crawler.rb'
 require 'mosaic/mosaic.rb'
 
@@ -46,9 +48,4 @@ end
       #text, video, picture
     #terms
       #twitter only, for now
-      
-  
-
-  
-#deploy to backtrace for staging
 

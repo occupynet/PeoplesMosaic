@@ -1,0 +1,27 @@
+%form{:action => '/campaigns/create', :method => 'post'}
+  %div
+    %label
+      Name
+    %input{:type => 'text', :name => 'name' }
+  %div
+    %label
+      Search Terms (with hashtags as applicable)
+    %input{:type => 'text', :name => 'search_terms' }
+  %div
+    %label
+      Description
+    %input{:type => 'textarea', :name => 'description'}
+  %div
+    %label
+      Cover Image Url
+    %input{:type => 'text', :name => 'cover_image' }
+  %div
+    %label
+      Start Date (MM-DD-YYYY)
+    %input{:type => 'text', :name => 'start_date' }
+  %div
+    %label
+      End Date (MM-DD-YYYY)
+    %input{:type => 'text', :name => 'end_date' }
+  %div
+    %input{:type => 'submit'}

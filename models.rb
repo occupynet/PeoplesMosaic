@@ -1,25 +1,36 @@
 class Campaign
   include MongoMapper::Document
+  plugin MongoMapper::Plugins::Sluggable
+  sluggable :name
   key :slug, String, :required => true
-  key :title, String, :required => true
+  key :name, String, :required => true
   key :edit_link, String, :required => true
   key :description, String
+  key :conditions
   key :description_link, String
   key :start_timestamp, Integer
   key :end_timestamp, Integer
+  key :bamp, String
   key :ordering_key, String
   key :ordering_dir, String
   key :cover_image, String
   #any other conditions, as a mongo doc
+
+  def build_edit_link
+    #if no edit link
+    if self.edit_link ==nil
+      (0...31).map{65.+(rand(52)).chr}.join
+    end
+  end
 end
 
 #join table
-class CampaignTweet
+class CampaignMedia
   include MongoMapper::Document
   key :campaign_id, ObjectId
-  key :tweet_id, ObjectId
+  key :media_id, ObjectId
+  key :media_type, String
   timestamps!
-  
 end
 
 class Tweet

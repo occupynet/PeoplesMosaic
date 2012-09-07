@@ -1,4 +1,6 @@
+require File.join(File.dirname(__FILE__),'campaign.rb')
 #get all of the photos within a grid size of x and y 
+
 class Mosaic 
   attr_accessor :page_size, :campaign, :conditions, :meta_info
   def grid(skip)
