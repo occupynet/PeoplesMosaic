@@ -55,10 +55,9 @@ get '/campaigns/build_collection' do
     t_count = tweets.size
     Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
     tweets.each do |t|
-    #build CM object
-    puts campaign.name
-    puts t.id_str
-
+      #build CM object
+      puts campaign.name
+      puts t.id_str
       cm = {
         :media_id => t.id_str,
         :media_type =>'tweet',
@@ -68,6 +67,7 @@ get '/campaigns/build_collection' do
       cmd.media_id = t.id
       cmd.media_type = 'tweet'
       cmd.campaign_id = campaign.id
+      cmd.ordering_key = t.timestamp
       cmd.set(cm)
       cmd.save!
     end

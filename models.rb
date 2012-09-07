@@ -30,6 +30,7 @@ class CampaignMedia
   key :campaign_id, ObjectId
   key :media_id, ObjectId
   key :media_type, String
+  key :ordering_key 
   timestamps!
 end
 

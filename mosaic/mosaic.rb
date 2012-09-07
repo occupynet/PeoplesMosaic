@@ -4,17 +4,28 @@ require File.join(File.dirname(__FILE__),'campaign.rb')
 class Mosaic 
   attr_accessor :page_size, :campaign, :conditions, :meta_info
   def grid(skip)
+    #get our Campaign object
     if @campaign == nil
       camp = Campaign.first
     else
       camp = Campaign.first(:slug=>@campaign)
     end
-    #get our Campaign object
-    @conditions = {:limit=>@page_size, :skip=>skip * @page_size,:order=>:timestamp.asc, :conditions=>{'entities.media.0.media_url'=>{:$exists=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true}, 'entities.urls.0.expanded_url'=>{'$not'=>/yfrog/}, :timestamp=>{'$gte'=>camp['conditions']['start_time'].to_i,'$lte'=>camp['conditions']['end_time'].to_i},:block=>{:$exists=>false}}}
+    #get CampaignMedia that match campaign ID
+    @conditions = {
+      :limit=>@page_size, :skip=>skip * @page_size,:order=>:ordering_key.asc,
+      :conditions=>{:campaign_id=>camp.id}
+    }
     @meta_info = {:page_title => camp['page_title'], :description => camp['description']}
    #return all crawled tweets with conditions c
-   Tweet.all(@conditions)
-  end
+   cm = CampaignMedia.all(@conditions)
+   puts cm.inspect
+   tweets = []
+   cm.each do |c|
+     tweets << Tweet.first({:id=>c.media_id})
+   end
+   puts tweets.inspect
+   tweets.reject!{|x|x==nil}
+ end
 end
 
 
