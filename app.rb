@@ -7,6 +7,8 @@ require 'haml'
 require 'open-uri'
 require 'time'
 require 'mm-sluggable'
+require 'youtube_it'
+require 'vimeo'
 
 require 'config.rb'
 #require 'crawler/crawler.rb'
