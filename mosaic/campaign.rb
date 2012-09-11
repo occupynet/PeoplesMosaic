@@ -11,9 +11,20 @@ post '/campaigns/create' do
   @campaign.edit_link = (0...31).map{65.+(rand(52)).chr}.join
   puts params[:start_date]
   puts params[:end_date]
-  @campaign.save
+  @campaign.save!
+  #create terms for the crawler
+  @terms = params[:search_terms].split(' ')
+  @terms.each do |term|
+    t = Term.new
+    t.term = term
+    t.campaign_id = @campaign.id
+    t.since_id = 0
+    t.last_checked = Time.now
+    t.save
+  end
   haml 'campaigns/edit'.to_sym
 end
+
 
 get '/campaigns/reformat' do 
   @campaigns = Campaign.all
@@ -30,7 +41,6 @@ get '/campaigns/reformat' do
       puts @c.inspect
       @c.save
         
-        Campaign.collection.update({:slug=>@c.slug},{'$set'=>{:fartle=>'foo', :start_timestamp=>st,:end_timestamp=>et}})
         Campaign.collection.update({:slug=>@c.slug},{'$unset'=>{:conditions=>true}})
     end
   end
@@ -44,7 +54,7 @@ get '/campaigns/build_collection' do
       #build conditions array
       conditions = {
         :conditions=>{
-          'entities.media.0.media_url'=>{:$exists=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true},
+          'entities.media.0.media_url'=>{'$exists'=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true},
           'entities.urls.0.expanded_url'=>{'$not'=>/yfrog/},
           :timestamp=> {'$gte'=>campaign[:start_timestamp],'$lte'=>campaign[:end_timestamp]},
           :block=>{'$exists'=>false}          
@@ -56,24 +66,65 @@ get '/campaigns/build_collection' do
     Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
     tweets.each do |t|
       #build CM object
+    
       puts campaign.name
-      puts t.id_str
-      cm = {
-        :media_id => t.id_str,
-        :media_type =>'tweet',
-        :campaign_id => campaign.id
-      }
+      puts t['entities']['media'][0]['media_url']
+    
+     # cm = {
+    #    :media_id => t.id_str,
+     #   :media_type =>'tweet',
+    #    :campaign_id => campaign.id
+    #  }
       cmd = CampaignMedia.new
-      cmd.media_id = t.id
+      cmd.media_id = t.id_str
       cmd.media_type = 'tweet'
       cmd.campaign_id = campaign.id
       cmd.ordering_key = t.timestamp
-      cmd.set(cm)
+     # cmd.set(cm)
       cmd.save!
     end
   end
       #CampaignMedia.collection.update({:media_id=>t.id_str,:campaign_id=>campaign.id},cm,)
       haml :about
+end
+
+get '/campaigns/update/:edit_link' do
+  @campaign = Campaign.first({:edit_link=>params[:edit_link]})
+  #now do a hashtag search
+  @search_terms = Term.all({:conditions=>{:campaign_id=>@campaign.id}})
+  puts @campaign.inspect
+  puts @search_terms.inspect
+  @search_terms.each do |term|
+    puts term.inspect
+    #get the tweets from the internet
+    #do formatting, link expansion etc in this method
+    #save the tweet
+    tweets = term.crawl
+    since_id = ''
+    tweets.each do |tweet|
+      #does it conform to campaign settings (has media?)
+      if tweet["entities"] && tweet["entities"]["media"]
+        puts tweet.inspect
+        
+        #build a campaingn tweet object
+        ct = CampaignMedia.new
+        ct.media_id = tweet.id_str
+        ct.campaign_id = @campaign.id
+        ct.ordering_key = tweet.timestamp
+        #save it 
+        ct.save
+      end
+      since_id = tweet.id_str
+    end
+    #update since time for term
+    #update since id for highest tweet id crawled
+
+    puts since_id
+    term.since_id = since_id
+    term.last_checked = Time.now
+    term.save
+  end
+  haml :about
 end
 
 

@@ -18,13 +18,11 @@ class Mosaic
     @meta_info = {:page_title => camp['page_title'], :description => camp['description']}
    #return all crawled tweets with conditions c
    cm = CampaignMedia.all(@conditions)
-   puts cm.inspect
    tweets = []
    cm.each do |c|
-     tweets << Tweet.first({:id=>c.media_id})
+     tweets << Tweet.first({:id_str=>c.media_id.to_s})
    end
-   puts tweets.inspect
-   tweets.reject!{|x|x==nil}
+   tweets
  end
 end
 
@@ -34,8 +32,6 @@ get '/about' do
   haml :about
 end
 
-
-#temporarily disable yfrog - images need correct dimensions
 get '/:campaign' do
   m = Mosaic.new
   m.campaign = params[:campaign]
@@ -57,3 +53,5 @@ get '/page/?:campaign/:page' do
   @meta = m.meta_info
   haml 'mosaic/grid'.to_sym  
 end
+
+

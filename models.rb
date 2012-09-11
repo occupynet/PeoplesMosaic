@@ -2,14 +2,15 @@ class Campaign
   include MongoMapper::Document
   plugin MongoMapper::Plugins::Sluggable
   sluggable :name
-  key :slug, String, :required => true
+#  deprecated?
+#  key :slug, String, :required => true
   key :name, String, :required => true
   key :edit_link, String, :required => true
   key :description, String
   key :conditions
   key :description_link, String
-  key :start_timestamp, Integer
-  key :end_timestamp, Integer
+  key :start_timestamp
+  key :end_timestamp
   key :bamp, String
   key :ordering_key, String
   key :ordering_dir, String
@@ -19,7 +20,7 @@ class Campaign
   def build_edit_link
     #if no edit link
     if self.edit_link ==nil
-      (0...31).map{65.+(rand(52)).chr}.join
+      (0...31).map{97.+(rand(26)).chr}.join
     end
   end
 end
@@ -27,8 +28,9 @@ end
 #join table
 class CampaignMedia
   include MongoMapper::Document
+  belongs_to :campaign
   key :campaign_id, ObjectId
-  key :media_id, ObjectId
+  key :media_id
   key :media_type, String
   key :ordering_key 
   timestamps!
@@ -65,9 +67,119 @@ end
 class Term
   include MongoMapper::Document
   key :campaign_id, ObjectId
+  key :term, String
   key :start_time, Time
   key :end_time, Time
+  key :since_id, String
+  key :last_checked, Time
+  belongs_to :campaign
   timestamps!
+  
+  
+  def crawl
+    
+    @blocked = BlockedUser.all
+    @block = {}
+    sleep 1
+    @blocked.each do |block|
+      @block[block["user_id"]] = block["user_id"]
+    end
+    @tweets = []
+    puts self.term
+    d = Time.at(self.campaign.end_timestamp).to_datetime
+    d = Time.now.to_datetime
+    #only do this if current time is before campaign.end_timestamp
+    date_until = [d.year, d.month, ((d.day.to_i)+1).to_s].join('-').to_s
+     15.times do |p|
+       begin 
+         #campaign.since_id, campaign.end_date
+         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>196982181401341952, :until=>date_until,:include_entities=>1}
+         tweets = Twitter.search(self.term.to_s + " -rt", query)
+       rescue
+         puts "bad gateway"
+         sleep 30
+         tweets = Twitter.search(self.term.to_s + " -rt", query)   
+       end
+       begin 
+         puts tweets.size
+       rescue NoMethodError
+         tweets = []
+       end
+       if tweets.size==0
+         break
+       end
+         
+       tweets.each do | a_tweet |
+         #add an integer timestamp
+         begin 
+           a_tweet.attrs["timestamp"] = Time.parse(a_tweet.attrs["created_at"]).to_i
+         rescue NoMethodError
+           a_tweet.attrs["timestamp"] = 1
+         end
+   
+         #extract vids for embed code
+         if a_tweet.attrs["entities"]
+           if a_tweet.attrs["entities"]["urls"] !=nil
+           a_tweet.attrs["entities"]["urls"].each do |url|
+             3.times do |x|
+               begin 
+                 url["expanded_url"].expand_urls!
+               rescue NoMethodError
+                 url["expanded_url"] = ""
+               end
+             end
+             if url["expanded_url"].split("youtube.com").size >1 || url["expanded_url"].split("youtu.be").size > 1
+               client = YouTubeIt::Client.new(:dev_key => @devkey)
+               begin 
+                 vid = client.video_by(url["expanded_url"])
+                 a_tweet.attrs["video_embed"] = vid.embed_html
+               rescue OpenURI::HTTPError => e
+               
+               end
+             
+             #vimeo 
+             elsif (url["expanded_url"].split("vimeo.com").size > 1)
+               video_id = url["expanded_url"].split("/").last
+               vid = Vimeo::Simple::Video.info(video_id)
+               a_tweet.attrs["video_embed"] =  '<iframe src="http://player.vimeo.com/video/#{vid.id}" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>'
+         
+             #ht.ly is only used by porn spammers
+             elsif (url["expanded_url"].split("ht.ly").size > 1)
+               a_tweet.attrs["block"] =1
+             #manually grab instagrams for the thumbnail
+             elsif (url["expanded_url"]).split("instagr.am").size > 1
+               begin OpenURI::HTTPError
+               #add the media link
+                 html = ""
+                 open(url["expanded_url"]) {|f|
+                   f.each_line {|line| html << line}
+                 }
+                @html = Hpricot(html)
+                a_tweet.attrs["entities"]["media"] = [:media_url=>(@html/"img.photo")[0][:src] , :expanded_url=>  (@html/"img.photo")[0][:src],:size=>{:small=>{:h=>320}}]
+               rescue 
+               end
+             end
+           end
+         end
+         end
+
+         #block this tweet if the user is in the blocked list
+         if @block[a_tweet.attrs["from_user_id"].to_s] !=nil
+           a_tweet.attrs["block"] = 1
+         end
+         begin 
+           #kill the twitter ID so we get a mongoID object instead
+           a_tweet.attrs['id'] = nil  
+           #save / update
+           Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
+           @tweets << Tweet.first({:id_str=>a_tweet.attrs["id_str"].to_s})
+         rescue  
+         end
+       end
+     end
+  #return the list of tweets to save CampaignMedia objects
+  @tweets
+  end
 end
 
 #just a collection of user ids that are blocked

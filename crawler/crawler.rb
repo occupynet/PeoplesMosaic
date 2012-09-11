@@ -109,14 +109,15 @@ get '/crawl' do
             begin 
 
            a_tweet.attrs['id'] = nil  
-           a_tweet. Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
+           a_tweet. 
+           Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
           rescue  
           end
           end
           sleep 2
         end
        #save check time for this term
-        Term.collection.update({:term=>term.term},{:term=>term.term,:last_checked=>Time.now,:is_active=>term.is_active},{:upsert=>true})
+       
         sleep 30
       end
     end
