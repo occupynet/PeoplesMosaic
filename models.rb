@@ -2,6 +2,7 @@ class Campaign
   include MongoMapper::Document
   plugin MongoMapper::Plugins::Sluggable
   sluggable :name
+  many :terms
 #  deprecated?
 #  key :slug, String, :required => true
   key :name, String, :required => true
@@ -29,15 +30,56 @@ end
 class CampaignMedia
   include MongoMapper::Document
   belongs_to :campaign
+  
   key :campaign_id, ObjectId
   key :media_id
   key :media_type, String
   key :ordering_key 
   timestamps!
+  
+  
+  def save_from_url (url, edit_link)
+    c = Campaign.first({:edit_link=>edit_link})
+    if (c.slug !=nil)
+      self.campaign_id = c.id
+      self.ordering_key = 'timestamp'
+
+      if (url.split("twitter.com").size >1)
+        #ugly split
+        id = url.split("twitter.com")[1].split("/")[4]
+        a_tweet = Twitter.status(id).attrs
+        self.media_type = 'twitter'
+        a.tweet['id_str'] = a_tweet['id'].to_s
+        a_tweet.id=nil
+        Tweet.collection.update({:id_str=>a_tweet["id_str"].to_s},a_tweet, {:upsert => true})
+        #now view the tweet
+        self.media_id = a_tweet['id_str']
+        self.save
+        @tweet = a_tweet["text"]
+      else
+        #if not, parse what we can with hpricot and just save the whole page
+        html = ""
+        open(url) {|f|
+          f.each_line {|line| html << line}
+        }
+        domain = url.split("/")[2]
+        @html = Hpricot(html)
+        title = (@html/"title")[0].inner_html
+        #bookmarked so we know it was intentionally saved, not crawled
+        Tweet.collection.update({:url=>params[:url]}, {:html=>html, :url=>params[:url],:title=>title, :id_str=>url, :origin=>domain,:bookmarked=>true}, {:upsert => true}) 
+        self.media_type = domain
+        self.media_id = url
+        @tweet = title
+      end
+      @tweet
+    end
+  end
+  
 end
 
 class Tweet
   include MongoMapper::Document
+  key :ows_meta_tags, Array
   def removeIds
     
   end
@@ -45,7 +87,20 @@ class Tweet
   def removeRetweets
     
   end
-
+  
+  def build_hashtag_array
+    tags = []
+    if ( (! self.entities.empty?)  && self['entities']['hashtags'] !=nil)
+      self['entities']['hashtags'].each do |tag|
+        tags << tag['text']
+      end
+    end
+    self.ows_meta_tags = tags
+  end
+  
+  #tweetstache - crawl and save media from a url
+  
+  
   def expand_urls!
     self['entities']['urls'].each do |url|
       begin 
@@ -172,7 +227,9 @@ class Term
            a_tweet.attrs['id'] = nil  
            #save / update
            Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
-           @tweets << Tweet.first({:id_str=>a_tweet.attrs["id_str"].to_s})
+           tweet =  Tweet.first({:id_str=>a_tweet.attrs["id_str"].to_s})
+           tweet.build_hashtag_array
+           @tweets << tweet
          rescue  
          end
        end
@@ -185,4 +242,9 @@ end
 #just a collection of user ids that are blocked
 class BlockedUser
   include MongoMapper::Document
+  #purge all existing media from this user
+  def purge
+  end
+  
+  
 end

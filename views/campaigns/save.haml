@@ -1,0 +1,10 @@
+%div
+  %h1 Save a Tweet
+  %form{:action => 'save', :method => 'post'}
+    %h2 Paste the url for the Tweet here
+    %input{:type => 'hidden', :name =>'edit_link', :value=>@edit_link}
+    %input{:type => 'text', :name => 'url' }
+    %input{:type => 'submit'}
+%div
+  %h2 Last Saved Tweet
+  = @tweet

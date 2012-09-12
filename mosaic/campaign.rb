@@ -26,6 +26,18 @@ post '/campaigns/create' do
 end
 
 
+get 'campaigns/edit/:edit_link' do
+  #get campaign by edit link
+  #get related terms
+    #with ajax interface
+  #photos to view in frame
+    #/mosaic/admin/:edit_link/p/:page
+      #show block
+      #show block user
+      
+end
+
+
 get '/campaigns/reformat' do 
   @campaigns = Campaign.all
   @campaigns.each do |c|
@@ -51,40 +63,41 @@ get '/campaigns/build_collection' do
     #get each campaign
     @campaigns = Campaign.all
     @campaigns.each do |campaign|
+      terms = Term.all({:campaign_id=>campaign.id})
+      tags = []
+      terms.each do |term|
+        tags << term['term'].gsub!('#','')
+      end
+      if terms.empty?
+        terms = {}
+      else
+        terms = {:ows_meta_tags=>tags}
+      end
       #build conditions array
       conditions = {
         :conditions=>{
           'entities.media.0.media_url'=>{'$exists'=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true},
-          'entities.urls.0.expanded_url'=>{'$not'=>/yfrog/},
           :timestamp=> {'$gte'=>campaign[:start_timestamp],'$lte'=>campaign[:end_timestamp]},
-          :block=>{'$exists'=>false}          
+          :block=>{'$exists'=>false}.merge(terms)
         }
       }
+    puts conditions.inspect
     #get all matching tweets
     tweets = Tweet.all(conditions)
+    puts campaign.name
+    puts tweets.size
     t_count = tweets.size
     Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
     tweets.each do |t|
       #build CM object
-    
-      puts campaign.name
-      puts t['entities']['media'][0]['media_url']
-    
-     # cm = {
-    #    :media_id => t.id_str,
-     #   :media_type =>'tweet',
-    #    :campaign_id => campaign.id
-    #  }
+  
       cmd = CampaignMedia.new
-      cmd.media_id = t.id_str
-      cmd.media_type = 'tweet'
-      cmd.campaign_id = campaign.id
-      cmd.ordering_key = t.timestamp
-     # cmd.set(cm)
-      cmd.save!
+      CampaignMedia.collection.update({:campaign_id=>campaign.id, :media_id=>t.id_str.to_s,:media_type=>'tweet'},{:media_id => t.id_str,
+        :media_type => 'tweet',
+        :campaign_id => campaign.id,
+        :ordering_key => t.timestamp},{:upsert=>true})
     end
   end
-      #CampaignMedia.collection.update({:media_id=>t.id_str,:campaign_id=>campaign.id},cm,)
       haml :about
 end
 
