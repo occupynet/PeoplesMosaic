@@ -8,7 +8,7 @@ post '/campaigns/create' do
   @campaign.description = params[:description]
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
-  @campaign.edit_link = (0...31).map{65.+(rand(52)).chr}.join
+  @campaign.build_edit_link
   puts params[:start_date]
   puts params[:end_date]
   @campaign.save!
