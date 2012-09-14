@@ -17,14 +17,16 @@ post '/campaigns/create' do
   puts params[:end_date]
   @campaign.save!
   #create terms for the crawler
-  @terms = params[:search_terms].split(' ')
-  @terms.each do |term|
-    t = Term.new
-    t.term = term
-    t.campaign_id = @campaign.id
-    t.since_id = 0
-    t.last_checked = Time.now
-    t.save
+  if (params[:search_terms] !=nil)
+    @terms = params[:search_terms].split(' ')
+    @terms.each do |term|
+      t = Term.new
+      t.term = term
+      t.campaign_id = @campaign.id
+      t.since_id = 0
+      t.last_checked = Time.now
+      t.save
+    end
   end
   @terms = Term.all({:campaign_id => @campaign.id})
   redirect '/campaigns/edit/' << @campaign.edit_link
