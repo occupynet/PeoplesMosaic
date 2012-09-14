@@ -262,6 +262,8 @@ class NewTweet
   include MongoMapper::Document
   key :media_id
   def cleanup
+
+    @cm = CampaignMedia.all({:order=>'media_id.asc'.to_sym})
     @cm.each do |cm|
       ct = CampaignMedia.all({:media_id =>cm[:media_id]})
       x = ct.size-1
