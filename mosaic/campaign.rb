@@ -13,23 +13,23 @@ post '/campaigns/create' do
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
   @campaign.edit_link = @campaign.build_edit_link
+  @campaign.cover_image = params[:cover_image]
+  
   puts params[:start_date]
   puts params[:end_date]
   @campaign.save!
   #create terms for the crawler
-  if (params[:search_terms] !=nil)
-    @terms = params[:search_terms].split(' ')
-    @terms.each do |term|
-      t = Term.new
-      t.term = term
-      t.campaign_id = @campaign.id
-      t.since_id = 0
-      t.last_checked = Time.now
-      t.save
-    end
+  @terms = params[:search_terms].split(' ')
+  @terms.each do |term|
+    t = Term.new
+    t.term = term
+    t.campaign_id = @campaign.id
+    t.since_id = 0
+    t.last_checked = Time.now
+    t.save
   end
   @terms = Term.all({:campaign_id => @campaign.id})
-  redirect '/campaigns/edit/' << @campaign.edit_link
+  redirect '/campaigns/create/' << @campaign.edit_link
 end
 
 
@@ -45,6 +45,26 @@ get '/campaigns/edit/:edit_link' do
       #show block user
   haml 'campaigns/edit'.to_sym
 end
+
+post '/campaigns/edit/:edit_link' do
+  #get campaign by edit link
+  @campaign = Campaign.first({:edit_link =>params[:edit_link]})
+  @campaign.page_title = params[:name]
+  @campaign.description = params[:description]
+  @campaign.cover_image = params[:cover_image]
+  @campaign.save!
+  puts @campaign.inspect
+  #get related terms
+  @terms = Term.all({:campaign_id => @campaign.id})
+    #with ajax interface
+  #photos to view in frame
+    #/mosaic/admin/:edit_link/p/:page
+      #show block
+      #show block user
+  redirect '/campaigns/edit/' << @campaign.edit_link
+end
+
+
 
 
 get '/campaigns/reformat' do 
