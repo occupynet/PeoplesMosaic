@@ -45,7 +45,8 @@
     - @terms.each do |term|
       %div.term
         = term.term
-    service, active, media found on this term, start date, end date
+    %div{:style=>'display:none'}
+        service, active, media found on this term, start date, end date
 
 %div#preview 
   %h2 Preview

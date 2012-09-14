@@ -255,7 +255,8 @@ Tweet.ensure_index([[:id_str,1]], :unique=>true)
 CampaignMedia.ensure_index(:media_id)
 CampaignMedia.ensure_index(:campaign_id)
 CampaignMedia.ensure_index([[:media_id, 1],[:campaign_id,1]],:unique=>true)
-
+CampaignMedia.ensure_index([[:ordering_key,1]])
+CampaignMedia.ensure_index([[:ordering_key,-1]])
 
 
 class NewTweet
