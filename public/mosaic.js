@@ -2,7 +2,18 @@ var $mosaic;
 $(document).ready(function(){
 
   $(".mosaic").first().addClass("infinite-scrolling");
- 
+  
+  $("div.block").click(function(){
+    $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
+    $(this).parent().parent().fadeOut()
+  })
+  
+  
+  $("div.duplicates").click(function(){
+    $.ajax('/campaigns/remove_duplicates/'+ $(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
+    $(this).parent().parent().fadeOut()
+  })
+  
 
   $("#bigpic").click(function(e){
     e.stopPropagation();
@@ -11,6 +22,9 @@ $(document).ready(function(){
     var setOverlays = function(el){
       $(el).find(".grid").unbind('hover') ;
       $(el).find(".overlay").unbind('click');
+      $(el).find(".block").unbind('click');
+      $(el).find(".duplicates").unbind('click');
+
       $(el).find(".grid").each(function(i,e){
         var o = $(e).find(".overlay");
         var img = $(e).find("img").first();
@@ -21,6 +35,17 @@ $(document).ready(function(){
           $("#bigpic").find("img").css("margin","0% 25%");
           $("#bigpic").fadeIn();
         })
+        
+        $("div.block").click(function(){
+$.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
+          $(this).parent().parent().fadeOut()
+        })
+
+        $("div.duplicates").click(function(){
+          $.ajax('/campaigns/remove_duplicates/'+ $(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
+          $(this).parent().parent().fadeOut()
+        })
+        
         
         $(e).hover(function(){
           $(this).find('.overlay').stop().fadeTo('fast',0.9);

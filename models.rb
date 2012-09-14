@@ -3,6 +3,7 @@ class Campaign
   plugin MongoMapper::Plugins::Sluggable
   sluggable :name
   many :terms
+  key :page_title
 #  deprecated?
 #  key :slug, String, :required => true
   key :name, String, :required => true
@@ -30,7 +31,7 @@ end
 class CampaignMedia
   include MongoMapper::Document
   belongs_to :campaign
-  
+  belongs_to :tweet
   key :campaign_id, ObjectId
   key :media_id
   key :media_type, String
@@ -132,7 +133,6 @@ class Term
   
   
   def crawl
-    
     @blocked = BlockedUser.all
     @block = {}
     sleep 1
@@ -142,13 +142,12 @@ class Term
     @tweets = []
     puts self.term
     d = Time.at(self.campaign.end_timestamp).to_datetime
-    d = Time.now.to_datetime
     #only do this if current time is before campaign.end_timestamp
     date_until = [d.year, d.month, ((d.day.to_i)+1).to_s].join('-').to_s
      15.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>196982181401341952, :until=>date_until,:include_entities=>1}
+         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>self.since_id, :until=>date_until,:include_entities=>1}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
        rescue
          puts "bad gateway"
@@ -248,3 +247,40 @@ class BlockedUser
   
   
 end
+
+
+#indexes
+Tweet.ensure_index(:timestamp)
+Tweet.ensure_index([[:id_str,1]], :unique=>true)
+CampaignMedia.ensure_index(:media_id)
+CampaignMedia.ensure_index(:campaign_id)
+CampaignMedia.ensure_index([[:media_id, 1],[:campaign_id,1]],:unique=>true)
+
+
+
+class NewTweet
+  include MongoMapper::Document
+  key :media_id
+  def cleanup
+    @cm.each do |cm|
+      ct = CampaignMedia.all({:media_id =>cm[:media_id]})
+      x = ct.size-1
+      ct[1..x].each {|p|p.destroy}
+    end
+    
+    @prev_id="A"
+    @cm = CampaignMedia.all({:order=>'media_id.asc'.to_sym})
+    @cm.each do |cm|
+      if cm.media_id == @prev_id
+        NewTweet.collection.update({:media_id=>cm.media_id}, {:twid=>cm.id, :media_id=>cm.media_id},{:upsert=>true})
+      end
+      @prev_id = cm.media_id
+    end
+    @nt = NewTweet.all
+    @nt.each do |tw|
+      cm = CampaignMedia.first(:id=>tw[:twid])
+      cm.destroy
+    end
+  end
+end
+

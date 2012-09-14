@@ -691,3 +691,7 @@ body {
   #term {
     margin:20px;
   }
+  
+  .admin .isotope-item {
+    min-height:120px;
+  }

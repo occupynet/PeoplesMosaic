@@ -1,28 +1,56 @@
-%h1 Create A Campaign
-%form{:action => '/campaigns/create', :method => 'post'}
-  %div
-    %label
-      Name
-    %input{:type => 'text', :name => 'name' }
-  %div
-    %label
-      Search Terms (with hashtags as applicable)
-    %input{:type => 'text', :name => 'search_terms' }
-  %div
-    %label
-      Description
-    %input{:type => 'textarea', :name => 'description'}
-  %div
-    %label
-      Cover Image Url
-    %input{:type => 'text', :name => 'cover_image' }
-  %div
-    %label
-      Start Date (MM-DD-YYYY)
-    %input{:type => 'text', :name => 'start_date' }
-  %div
-    %label
-      End Date (MM-DD-YYYY)
-    %input{:type => 'text', :name => 'end_date' }
-  %div
-    %input{:type => 'submit'}
+%h1 
+  =@campaign.name
+%div#left
+  %h1 Edit Information
+  %form{:action => '/campaigns/create', :method => 'post'}
+    %div
+      %label
+        Name
+      %input{:type => 'text', :name => 'name', :value => @campaign.name }
+    - if (@terms.size <1)
+      %div
+        %label
+          Search Terms (with hashtags as applicable)
+        %input{:type => 'text', :name => 'search_terms' }
+    %div
+      %label
+        Description
+      %input{:type => 'textarea', :name => 'description', :value => @campaign.description}
+    %div
+      %label
+        Cover Image Url
+      %input{:type => 'text', :name => 'cover_image', :value => @campaign.cover_image }
+      %img{:src => @campaign.cover_image, :height=>'120px'}
+    %div
+      %label
+        Start Date (MM-DD-YYYY)
+      %input{:type => 'text', :name => 'start_date' }
+    %div
+      %label
+        End Date (MM-DD-YYYY)
+      %input{:type => 'text', :name => 'end_date' }
+    %div
+      %input{:type => 'submit'}
+
+  %h1 Edit Link
+  %div#edit_link
+    This is the link to your campaign.  Anyone who has this link can edit your campaign, so you may share it with other members of your organization.  
+    %h2
+      %a{:href=>'/campaigns/edit/'<<@campaign.edit_link}
+        = 'http://mosaic.occupy.net/campaigns/edit/'<<@campaign.edit_link
+
+%div#right
+  %div#terms
+    %h2 Search Terms
+    - @terms.each do |term|
+      %div.term
+        = term.term
+    service, active, media found on this term, start date, end date
+
+%div#preview 
+  %h2 Preview
+  %iframe{:src=>'/admin/campaigns/'<< @campaign.edit_link, :width=>'960px', :height=>'400px'}
+
+  
+  
+    

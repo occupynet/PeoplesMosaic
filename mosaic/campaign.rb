@@ -1,14 +1,18 @@
 get '/campaigns/create' do 
+  @terms = []
+  @campaign = Campaign.new
+  @campaign.edit_link =""
   haml 'campaigns/edit'.to_sym
 end
 
 post '/campaigns/create' do 
   @campaign = Campaign.new
   @campaign.name = params[:name]
+  @campaign.page_title = params[:name]
   @campaign.description = params[:description]
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
-  @campaign.build_edit_link
+  @campaign.edit_link = @campaign.build_edit_link
   puts params[:start_date]
   puts params[:end_date]
   @campaign.save!
@@ -22,19 +26,22 @@ post '/campaigns/create' do
     t.last_checked = Time.now
     t.save
   end
-  haml 'campaigns/edit'.to_sym
+  @terms = Term.all({:campaign_id => @campaign.id})
+  redirect '/campaigns/edit/' << @campaign.edit_link
 end
 
 
-get 'campaigns/edit/:edit_link' do
+get '/campaigns/edit/:edit_link' do
   #get campaign by edit link
+  @campaign = Campaign.first({:edit_link =>params[:edit_link]})
   #get related terms
+  @terms = Term.all({:campaign_id => @campaign.id})
     #with ajax interface
   #photos to view in frame
     #/mosaic/admin/:edit_link/p/:page
       #show block
       #show block user
-      
+  haml 'campaigns/edit'.to_sym
 end
 
 
@@ -137,20 +144,32 @@ get '/campaigns/update/:edit_link' do
     term.last_checked = Time.now
     term.save
   end
-  haml :about
+  redirect '/admin/campaigns/'<< @campaign.edit_link 
 end
 
 
-get '/campaigns/edit/:edit_id' do
-  #get the campaign by edit id
-  #show the form
-  
+
+
+
+
+get '/campaigns/remove_duplicates/:campaign_slug/:edit_link/:id' do
+  @c = Campaign.first({:slug=>params[:campaign_slug]})
+  if (@c['edit_link']==params[:edit_link])
+    @d = CampaignMedia.all({:media_id=>params[:id]})
+    x = @d.count-1
+    @d[1..x].each do |cm|
+      cm.destroy
+    end
+    haml 'campaigns/block'.to_sym
+  end
 end
 
-post '/campaigns/edit/:edit_id' do
-  #get stuff out of the form
-  #save it
-
+get '/campaigns/block/:campaign_slug/:edit_link/:id' do
+  @c = Campaign.first({:slug=>params[:campaign_slug]})
+  if (@c['edit_link']==params[:edit_link])
+    Tweet.collection.update({:id_str=>params[:id]},{'$set'=>{:block=>true}})
+    CampaignMedia.collection.update({:campaign_id=>@c.id, :media_id=>params[:id]},{'$set'=>{:hidden=>true}})
+    @t = Tweet.first({:id_str=>params[:id]})
+    haml 'campaigns/block'.to_sym
+  end
 end
-
-

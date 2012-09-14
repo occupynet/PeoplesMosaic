@@ -20,12 +20,6 @@ MongoMapper::database = @db_name
 
 #mongodb collection classes
 require 'models.rb'
-Tweet.ensure_index(:timestamp)
-Tweet.ensure_index ([[:id_str,1]], :unique=>true)
-CampaignMedia.ensure_index(:media_id)
-CampaignMedia.ensure_index(:campaign_id)
-
-
 Twitter.configure do |config|
   config.consumer_key = @twitter_consumer 
   config.consumer_secret = @twitter_consumer_secret
