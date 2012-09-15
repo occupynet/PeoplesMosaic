@@ -10,17 +10,10 @@ class Mosaic
     else
       camp = Campaign.first(:slug=>@campaign)
     end
-    puts "end time"
-    puts Time.at(camp.end_timestamp.to_i)
-    puts camp.end_timestamp.to_i
-    puts "now"
-    puts Time.now.to_i
-    puts (camp.end_timestamp.to_i > Time.now.to_i)
     sort = 'ordering_key asc'
     if camp.end_timestamp.to_i > Time.now.to_i
       sort = 'ordering_key desc'
     end
-    puts sort.inspect
     #get CampaignMedia that match campaign ID
     @conditions = {
       :limit=>@page_size, :skip=>skip * @page_size,:order=>sort,

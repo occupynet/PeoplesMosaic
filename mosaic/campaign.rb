@@ -29,7 +29,7 @@ post '/campaigns/create' do
     t.save
   end
   @terms = Term.all({:campaign_id => @campaign.id})
-  redirect '/campaigns/create/' << @campaign.edit_link
+  redirect '/campaigns/edit/' << @campaign.edit_link
 end
 
 
