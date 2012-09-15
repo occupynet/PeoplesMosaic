@@ -2,7 +2,7 @@ get '/campaigns/create' do
   @terms = []
   @campaign = Campaign.new
   @campaign.edit_link =""
-  haml 'campaigns/edit'.to_sym
+  haml 'campaigns/create'.to_sym
 end
 
 post '/campaigns/create' do 
@@ -147,7 +147,6 @@ get '/campaigns/update/:edit_link' do
       #does it conform to campaign settings (has media?)
       if tweet["entities"] && tweet["entities"]["media"]
         puts tweet.inspect
-        
         #build a campaingn tweet object
         ct = CampaignMedia.new
         ct.media_id = tweet.id_str
