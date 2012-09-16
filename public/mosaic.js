@@ -71,15 +71,12 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
       animationEngine : 'jquery',
       getSortData: {
         date: function ( $elem ){
-          console.log ($elem.find('.date').first().text())
           return parseInt($elem.find('.date').first().text())*(-1);
         },
         alphabetical: function ($elem) {
-          console.log($elem.find('.name').first().text())
           return $elem.find('.name').first().text()
         },
         activity: function ($elem) {
-          console.log($elem.find('.numImages').first().text());
           return parseInt($elem.find('.numImages').first().text())*(-1)
         }
       }    
@@ -101,8 +98,6 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
           var options = {},
           key = $optionSet.attr('dataOptionKey'),
           value = $this.attr('dataOptionValue');
-          console.log(key);
-          console.log(value);
         // parse 'false' as false boolean
         value = value === 'false' ? false : value;
         options[ key ] = value;
@@ -148,5 +143,8 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
           }
         }
       );
-      
+    //set display to ALL
+    window.setTimeout(function(){
+      $(".button").first().click();
+    },1000)
 })

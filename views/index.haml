@@ -37,7 +37,7 @@
           %a{:href=>campaign.slug} 
             = campaign.name
         %div.photo
-          -if campaign.terms.size > 1
+          -if campaign.terms.size > 0
             %div.terms.clearoverlay
               - campaign.terms.each do |term|
                 %div.term
