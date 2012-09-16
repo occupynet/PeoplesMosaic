@@ -138,7 +138,7 @@
   }
   
   #display-controls {
-      padding-top:40px;
+      padding-top:80px;
    }
   .buttons {
     clear:both;
@@ -229,7 +229,6 @@
      box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
      -moz-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
      -webkit-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
-
   }
 
   #more {
@@ -238,9 +237,9 @@
   }
   #mosaic-container #header {
     position:fixed;
-    height:40px;
+    height:60px;
     padding-left:20px;
-    padding-top:5px;
+    padding-top:15px;
     background-color:#000;
     width:98%;
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.80);

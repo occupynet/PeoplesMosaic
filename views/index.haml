@@ -1,5 +1,7 @@
 %div#mosaic-container
   %div#header
+    %script{:type=>"text/javascript", :src=>"http://nav.occupy.net/occupynet_nav.js"}
+    
     %h1 #Occupy
     %h1{:style=>"color:#fc3"}Mosaic
     %div{:style=>"float:right"}
@@ -35,10 +37,11 @@
           %a{:href=>campaign.slug} 
             = campaign.name
         %div.photo
-          %div.terms.clearoverlay
-            - campaign.terms.each do |term|
-              %div.term
-                = term.term
+          -if campaign.terms.size > 1
+            %div.terms.clearoverlay
+              - campaign.terms.each do |term|
+                %div.term
+                  = term.term
           -if campaign.cover_image.to_s.length > 1
             %a{:href=>campaign.slug}
               %img{:src=>campaign.cover_image}
