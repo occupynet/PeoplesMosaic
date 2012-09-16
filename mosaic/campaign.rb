@@ -133,38 +133,7 @@ end
 get '/campaigns/update/:edit_link' do
   @campaign = Campaign.first({:edit_link=>params[:edit_link]})
   #now do a hashtag search
-  @search_terms = Term.all({:conditions=>{:campaign_id=>@campaign.id}})
-  puts @campaign.inspect
-  puts @search_terms.inspect
-  @search_terms.each do |term|
-    puts term.inspect
-    #get the tweets from the internet
-    #do formatting, link expansion etc in this method
-    #save the tweet
-    tweets = term.crawl
-    since_id = ''
-    tweets.each do |tweet|
-      #does it conform to campaign settings (has media?)
-      if tweet["entities"] && tweet["entities"]["media"]
-        puts tweet.inspect
-        #build a campaingn tweet object
-        ct = CampaignMedia.new
-        ct.media_id = tweet.id_str
-        ct.campaign_id = @campaign.id
-        ct.ordering_key = tweet.timestamp
-        #save it 
-        ct.save
-      end
-      since_id = tweet.id_str
-    end
-    #update since time for term
-    #update since id for highest tweet id crawled
-
-    puts since_id
-    term.since_id = since_id
-    term.last_checked = Time.now
-    term.save
-  end
+  @campaign.update_media
   redirect '/admin/campaigns/'<< @campaign.edit_link 
 end
 

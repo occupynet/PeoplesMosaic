@@ -19,6 +19,45 @@ class Campaign
   key :cover_image, String
   #any other conditions, as a mongo doc
 
+
+
+
+  def update_media
+    @search_terms = Term.all({:conditions=>{:campaign_id=>self.id}})
+    puts @search_terms.inspect
+    @search_terms.each do |term|
+      puts term.inspect
+      #get the tweets from the internet
+      #do formatting, link expansion etc in this method
+      #save the tweet
+      tweets = term.crawl
+      since_id = ''
+      tweets.each do |tweet|
+        #does it conform to campaign settings (has media?)
+        if tweet["entities"] && tweet["entities"]["media"]
+          puts tweet.inspect
+          #build a campaingn tweet object
+          ct = CampaignMedia.new
+          ct.media_id = tweet.id_str
+          ct.campaign_id = self.id
+          ct.ordering_key = tweet.timestamp
+          #save it 
+          ct.save
+        end
+        since_id = tweet.id_str
+      end
+      #update since time for term
+      #update since id for highest tweet id crawled
+      puts since_id
+      term.since_id = since_id
+      term.last_checked = Time.now
+      term.save
+    end
+  end
+
+
+
+
   def build_edit_link
     #if no edit link
     if self.edit_link ==nil

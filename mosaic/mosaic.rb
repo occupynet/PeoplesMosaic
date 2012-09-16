@@ -10,6 +10,8 @@ class Mosaic
     else
       camp = Campaign.first(:slug=>@campaign)
     end
+    
+    puts camp.inspect
     sort = 'ordering_key asc'
     if camp.end_timestamp.to_i > Time.now.to_i
       sort = 'ordering_key desc'
