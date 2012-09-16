@@ -2,17 +2,57 @@
   %div#header
     %h1 #Occupy
     %h1{:style=>"color:#fc3"}Mosaic
+    %div{:style=>"float:right"}
+      %a{:href=>"/about"}About
+    
+  %div#display-controls
+    %div.buttons
+      %div.label
+        Show:
+      %div.optionset{:dataOptionkey=>'filter'}
+        %div.button{:dataOptionValue=>'*'}
+          All
+        %div.button{:dataOptionValue=>'.active'}
+          Active
+        %div.button{:dataOptionValue=>'.archived'}
+          Archived
+      %div.label
+        Sort:
+      %div.optionset{:dataOptionKey=>'sortBy'}
+        %div.button{:dataOptionValue=>'date'}
+          Date
+        %div.button{:dataOptionValue=>'alphabetical'}
+          Name
+        %div.button{:dataOptionValue=>'activity'}
+          Activity
+  %br{:clear=>'all'}
   %div#mosaic.campaigns
     - @campaigns.each do |campaign|
-      %div.campaign
-        %div.photo
-          %a{:href=>campaign.slug}
-            %img{:src=>campaign.cover_image}
+      %div{:class=>'campaign '+((campaign.end_timestamp > Time.now.to_i) ? 'active' : 'archived')}
+        %div.date{:style=>'display:none'}
+          = campaign.start_timestamp
         %div.name
           %a{:href=>campaign.slug} 
             = campaign.name
+        %div.photo
+          -if campaign.cover_image.to_s.length > 1
+            %a{:href=>campaign.slug}
+              %img{:src=>campaign.cover_image}
+          %div.terms
+            - campaign.terms.each do |term|
+              %div.term
+                = term.term
+
         %div.description
           = campaign.description
+          %div.numImages{:style=>'display:none'}
+            =campaign.media_count
+          %div.count  
+            = campaign.media_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
+            Images
 
+          
 %div{:style=>'display:none'}
   highlight active / inactive campaigns - isotope buttons to order by name, oldest, newest, active, archive, size
+  formatted_n = n.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
+  

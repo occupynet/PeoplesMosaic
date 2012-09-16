@@ -54,6 +54,7 @@ get '/:campaign' do
   @squares = m.grid(0)
   @page = 2
   @campaign = m.campaign
+  @terms = Term.all({:campaign_id=>@campaign.id})
   @meta = m.meta_info
   haml 'mosaic/grid'.to_sym  
 end
@@ -66,6 +67,7 @@ get '/page/?:campaign/:page' do
   @campaign = m.campaign
   @squares =m.grid(@page)
   @meta = m.meta_info
+  @terms = Term.all({:campaign_id=>@campaign.id})
   haml 'mosaic/grid'.to_sym  
 end
 

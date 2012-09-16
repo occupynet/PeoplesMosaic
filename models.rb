@@ -53,6 +53,8 @@ class Campaign
       term.last_checked = Time.now
       term.save
     end
+    self.media_count = CampaignMedia.count({:campaign_id=>self.id}) 
+    self.save
   end
 
 

@@ -55,6 +55,59 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
       })
     }
     
+    $campaigns = $('.campaigns').first();
+    $campaigns.isotope({
+      itemSelector : '.campaign',
+      layoutMode : 'masonry',
+      animationEngine : 'jquery',
+      getSortData: {
+        date: function ( $elem ){
+          console.log ($elem.find('.date').first().text())
+          return parseInt($elem.find('.date').first().text())*(-1);
+        },
+        alphabetical: function ($elem) {
+          console.log($elem.find('.name').first().text())
+          return $elem.find('.name').first().text()
+        },
+        activity: function ($elem) {
+          console.log($elem.find('.numImages').first().text());
+          return parseInt($elem.find('.numImages').first().text())*(-1)
+        }
+      },
+      sortBy: 'date'
+    });
+    
+    
+        var $optionSets = $('.buttons .optionset'),
+            $optionLinks = $optionSets.find('.button');
+
+        $optionLinks.click(function(){
+          var $this = $(this);
+          if ( $this.hasClass('selected') ) {
+               return false;
+             }
+             //toggle "selected classes"
+         var $optionSet = $this.parents('.optionset');
+         $optionSet.find('.selected').removeClass('selected');
+         $this.addClass('selected');
+          var options = {},
+          key = $optionSet.attr('dataOptionKey'),
+          value = $this.attr('dataOptionValue');
+          console.log(key);
+          console.log(value);
+        // parse 'false' as false boolean
+        value = value === 'false' ? false : value;
+        options[ key ] = value;
+        if ( key === 'layoutMode' && typeof changeLayoutMode === 'function' ) {
+          // changes in layout modes need extra logic
+          changeLayoutMode( $this, options )
+        } else {
+          // otherwise, apply new options
+          $campaigns.isotope( options );
+        }
+      });
+    
+    
     $mosaic = $('.mosaic').first();
     $mosaic.isotope({
              // options
