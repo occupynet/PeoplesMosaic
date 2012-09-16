@@ -8,6 +8,15 @@ $(document).ready(function(){
     $(this).parent().parent().fadeOut()
   })
   
+  $(".campaign .photo").each(function(i,e){
+    var o = $(e).find('.clearoverlay');
+    $(e).hover(function(){
+      $(this).find('.clearoverlay').stop().fadeTo('fast',0.8);
+    }, function (){
+        $(o).stop().fadeTo('fast',0);  
+      })
+  })
+  
   
   $("div.duplicates").click(function(){
     $.ajax('/campaigns/remove_duplicates/'+ $(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
@@ -73,8 +82,7 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
           console.log($elem.find('.numImages').first().text());
           return parseInt($elem.find('.numImages').first().text())*(-1)
         }
-      },
-      sortBy: 'date'
+      }    
     });
     
     

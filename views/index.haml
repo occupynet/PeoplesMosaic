@@ -35,21 +35,22 @@
           %a{:href=>campaign.slug} 
             = campaign.name
         %div.photo
-          -if campaign.cover_image.to_s.length > 1
-            %a{:href=>campaign.slug}
-              %img{:src=>campaign.cover_image}
-          %div.terms
+          %div.terms.clearoverlay
             - campaign.terms.each do |term|
               %div.term
                 = term.term
-
+          -if campaign.cover_image.to_s.length > 1
+            %a{:href=>campaign.slug}
+              %img{:src=>campaign.cover_image}
+          
         %div.description
           = campaign.description
           %div.numImages{:style=>'display:none'}
             =campaign.media_count
           %div.count  
-            = campaign.media_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
-            Images
+            %a{:href=>campaign.slug}
+              = campaign.media_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
+              Images
 
           
 %div{:style=>'display:none'}

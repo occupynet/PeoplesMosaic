@@ -162,13 +162,28 @@
   }
   .photo .terms {
     text-align:left;
-    top:-200px;
-    position:relative;
-    font-size:32px;
+    font-size:28px;
     font-weight:bold;
     color:#fff;
     opacity:0.8;
   }
+  .photo .clearoverlay {
+    position:absolute;
+    top:50px;
+    left:0px;
+    width:215;
+    padding:10px;
+    display:none;
+    cursor:pointer;
+    margin-left:10px;
+    background-color:#333;
+    border-radius:5px;
+    border:1px #f0f0f0 solid;
+    box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.80);
+  }
+  
   .label {
     border:none;
   }
@@ -376,10 +391,13 @@
     margin:10px;
     float:left;
     overflow:hidden;
-    border:3px dashed #fc0;
+    border:3px dashed #fc3;
     border-radius:5px;
     font-size:16px;
     color:#332;
+  }
+  .campaign:hover {
+    background-color:#fe9;
   }
   .campaign .count {
     color:#333;
