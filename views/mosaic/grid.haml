@@ -22,6 +22,7 @@
             %h1 = term.term
       %div#bigpic
         %img{:src=>""}
+      %div{:style=>'height:120px'}
       %div#mosaic.mosaic
         - @squares.each do |square|
           - if square["entities"]["media"][0]["media_url"] !=nil
