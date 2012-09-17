@@ -17,6 +17,7 @@ class Campaign
   key :ordering_key, String
   key :ordering_dir, String
   key :cover_image, String
+  key :media_count
   #any other conditions, as a mongo doc
 
 
