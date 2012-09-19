@@ -14,6 +14,13 @@
       %input{:type => 'text', :name => 'cover_image', :value => @campaign.cover_image }
       %img{:src => @campaign.cover_image, :height=>'120px'}
     %div
+      %label 
+        Show on Front Page
+        %select{:name => 'front_page'}
+          %option{:value=>''}--
+          %option{:value=>'yes'}yes
+          %option{:value=>'no'}no
+    %div
       %input{:type => 'submit'}
 
   %h1 Edit Link

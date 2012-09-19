@@ -8,6 +8,7 @@ class Campaign
 #  key :slug, String, :required => true
   key :name, String, :required => true
   key :edit_link, String, :required => true
+  key :front_page, String
   key :description, String
   key :conditions
   key :description_link, String

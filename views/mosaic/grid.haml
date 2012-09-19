@@ -13,15 +13,32 @@
       %div#header
         %a{:href=>"/"}
           %h1 #Occupy
-          %h1{:style=>"color:#fc3"}Mosaic
+          %h1{:style=>"color:#fc3"}Mosaic - 
+        %h1
+          =@meta[:page_title]
         %div{:style=>"float:right"}
-          %h1
-            =@meta[:page_title]
+          %div{:style=>"float:left"}
+            - if @active
+              Updates are Live - Showing Newest First
+            - else
+              Showing Oldest First, starting 
+              = Time.at (@campaign.end_timestamp).strftime("%B %d, %Y")
+          %div{:style=>"float:left"}
+            %div.social
+              %div.button.reveal{:rel=>"share"}
+                Share 
+            %div.modal{:rel=>"share"}
+              %div.hide
+                x
+              %textarea
+                %iframe{:width=>"1040", :src=>"http://mosaic.occupy.net/"+@campaign.slug, :frameborder=>0, :height=>"600px"}
         %div#info
           - @terms.each do |term|
-            %h1 = term.term
+            %h1 
+              =term.term
       %div#bigpic
         %img{:src=>""}
+      %div{:style=>'height:120px'}
       %div#mosaic.mosaic
         - @squares.each do |square|
           - if square["entities"]["media"][0]["media_url"] !=nil
@@ -40,7 +57,7 @@
       
         %div#infscr-loading
         %div#more 
-          %a{:href=>"/page/"+@campaign+"/"+@page.to_s}=@page.to_s
+          %a{:href=>"/page/"+@campaign.slug+"/"+@page.to_s}=@page.to_s
           
       :javascript
         var pkBaseURL = (("https:" == document.location.protocol) ?

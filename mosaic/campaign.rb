@@ -81,7 +81,6 @@ get '/campaigns/reformat' do
       @c.set(:edit_link => c.build_edit_link)
       puts @c.inspect
       @c.save
-        
         Campaign.collection.update({:slug=>@c.slug},{'$unset'=>{:conditions=>true}})
     end
   end

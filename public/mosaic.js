@@ -3,6 +3,18 @@ $(document).ready(function(){
 
   $(".mosaic").first().addClass("infinite-scrolling");
   
+  $(".reveal").click(function(e){
+     $(".modal").each(function(i,e){
+        if($(this).attr("rel")==$(e).attr("rel")){
+          $(e).fadeIn('fast')
+        }
+      });   
+  });
+  $(".hide").click(function(e){
+    $(this).parent().fadeOut('fast');
+  })
+  
+  
   $("div.block").click(function(){
     $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
     $(this).parent().parent().fadeOut()
@@ -145,6 +157,6 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
       );
     //set display to ALL
     window.setTimeout(function(){
-      $(".button").first().click();
+      $(".optionset .button").first().click();
     },1000)
 })
