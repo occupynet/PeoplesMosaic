@@ -57,9 +57,9 @@ class Campaign
     end
     #weird bug where a campaign would lose recently save-data.
     #suspect it was caused here, not sure
-      Campaign.collection.update({:id=>self.id},  
+      Campaign.collection.update({:slug=>self.slug},  
       {'$set'=>{:media_count=>CampaignMedia.count({:campaign_id=>self.id})}})
-    self.save
+   # self.save
   end
 
 

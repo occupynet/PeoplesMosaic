@@ -35,7 +35,15 @@
     %h2 Search Terms
     - @terms.each do |term|
       %div.term
-        = term.term
+        =term.term           
+        %a{:href=>'/campaigns/remove_term/'+@campaign.edit_link+'/'+term.id} [REMOVE TERM]
+    %div
+      %h2 
+        Add a Term
+      %form{ :method=>"post", :action=>"/campaigns/add_term/"+@campaign.edit_link}
+        %input{:name=>"term",:value=>"",:type=>"text"}
+        %input{:type=>"submit"}
+    
     %div{:style=>'display:none'}
       service, active, media found on this term, start date, end date
 

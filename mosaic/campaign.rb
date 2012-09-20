@@ -19,10 +19,10 @@ post '/campaigns/create' do
   puts params[:end_date]
   @campaign.save!
   #create terms for the crawler
-  @terms = params[:search_terms].split(' ')
+  @terms = params[:search_terms].split(',')
   @terms.each do |term|
     t = Term.new
-    t.term = term
+    t.term = term.strip!
     t.campaign_id = @campaign.id
     t.since_id = 0
     t.last_checked = Time.now
@@ -138,8 +138,34 @@ end
 
 
 
+post '/campaigns/add_term/:edit_link' do
+  @campaign = Campaign.first({:edit_link=>params[:edit_link]})
+  if(! @campaign.nil?)
+    @t = Term.new
+    @t.since_id = 1
+    @t.last_checked = Time.now
+    @t.campaign_id = @campaign.id
+    @t.term = params[:term]
+    @t.save!
+  end
+  redirect '/campaigns/edit/' << @campaign.edit_link
+end
 
+get '/campaigns/remove_term/:edit_link/:term_id' do
+  @campaign = Campaign.first({:edit_link=>params[:edit_link]})
+  if(! @campaign.nil?)
+    @term = Term.first({:campaign_id =>@campaign.id, :id=>params[:term_id]})
+    @term.destroy
+  end
+  redirect '/campaigns/edit/' << @campaign.edit_link
+end
 
+get '/campaigns/purge_term/:edit_link/:term' do
+  @campaign = Campaign.first({:edit_link=>params[:edit_link]})
+  if(! @campaign.nil?)
+  end
+  haml 'campaigns/block'.to_sym
+end
 
 get '/campaigns/remove_duplicates/:campaign_slug/:edit_link/:id' do
   @c = Campaign.first({:slug=>params[:campaign_slug]})
