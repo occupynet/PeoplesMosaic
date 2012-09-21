@@ -1,55 +1,56 @@
-%h1 
-  =@campaign.name
-%div#left
-  %h1 Edit Information
-  %form{:action => '/campaigns/edit/'<<@campaign.edit_link, :method => 'post'}
+%div#campaign
+  %h1 
+    =@campaign.name
+  %div#left
+    %h1 Edit Information
+    %form{:action => '/campaigns/edit/'<<@campaign.edit_link, :method => 'post'}
     
-    %div
-      %label
-        Description
-      %input{:type => 'textarea', :name => 'description', :value => @campaign.description}
-    %div
-      %label
-        Cover Image Url
-      %input{:type => 'text', :name => 'cover_image', :value => @campaign.cover_image }
-      %img{:src => @campaign.cover_image, :height=>'120px'}
-    %div
-      %label 
-        Show on Front Page
-        %select{:name => 'front_page'}
-          %option{:value=>''}--
-          %option{:value=>'yes'}yes
-          %option{:value=>'no'}no
-    %div
-      %input{:type => 'submit'}
+      %div
+        %label
+          Description
+        %input{:type => 'textarea', :name => 'description', :value => @campaign.description}
+      %div
+        %label
+          Cover Image Url
+        %input{:type => 'text', :name => 'cover_image', :value => @campaign.cover_image }
+        %img{:src => @campaign.cover_image, :height=>'120px'}
+      %div
+        %label 
+          Show on Front Page
+          %select{:name => 'front_page'}
+            %option{:value=>''}--
+            %option{:value=>'yes'}yes
+            %option{:value=>'no'}no
+      %div
+        %input{:type => 'submit'}
 
-  %h1 Edit Link
-  %div#edit_link
-    This is the link to your campaign.  Anyone who has this link can edit your campaign, so you may share it with other members of your organization.  
-    %h2
-      %a{:href=>'/campaigns/edit/'<<@campaign.edit_link}
-        = 'http://mosaic.occupy.net/campaigns/edit/'<<@campaign.edit_link
+    %h1 Edit Link
+    %div#edit_link
+      This is the link to your campaign.  Anyone who has this link can edit your campaign, so you may share it with other members of your organization.  
+      %h2
+        %a{:href=>'/campaigns/edit/'<<@campaign.edit_link}
+          = 'http://mosaic.occupy.net/campaigns/edit/'<<@campaign.edit_link
 
-%div#right
-  %div#terms
-    %h2 Search Terms
-    - @terms.each do |term|
-      %div.term
-        =term.term           
-        %a{:href=>'/campaigns/remove_term/'+@campaign.edit_link+'/'+term.id} [REMOVE TERM]
-    %div
-      %h2 
-        Add a Term
-      %form{ :method=>"post", :action=>"/campaigns/add_term/"+@campaign.edit_link}
-        %input{:name=>"term",:value=>"",:type=>"text"}
-        %input{:type=>"submit"}
+  %div#right
+    %div#terms
+      %h2 Search Terms
+      - @terms.each do |term|
+        %div.term
+          =term.term           
+          %a{:href=>'/campaigns/remove_term/'+@campaign.edit_link+'/'+term.id} [REMOVE TERM]
+      %div
+        %form{ :method=>"post", :action=>"/campaigns/add_term/"+@campaign.edit_link}
+          %h2 
+            Add a Term
+          %input{:name=>"term",:value=>"",:type=>"text"}
+          %input{:type=>"submit"}
     
-    %div{:style=>'display:none'}
-      service, active, media found on this term, start date, end date
+      %div{:style=>'display:none'}
+        service, active, media found on this term, start date, end date
 
-%div#preview 
-  %h2 Preview
-  %iframe{:src=>'/admin/campaigns/'<< @campaign.edit_link, :width=>'960px', :height=>'400px'}
+  %div#preview 
+    %h2 Preview
+    %iframe{:src=>'/admin/campaigns/'<< @campaign.edit_link, :width=>'960px', :height=>'400px'}
 
   
   
