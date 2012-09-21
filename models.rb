@@ -33,7 +33,7 @@ class Campaign
       #do formatting, link expansion etc in this method
       #save the tweet
       tweets = term.crawl
-      since_id = ''
+      since_id = term.since_id
       tweets.each do |tweet|
         #does it conform to campaign settings (has media?)
         if tweet["entities"] && tweet["entities"]["media"]
@@ -44,7 +44,7 @@ class Campaign
           ct.campaign_id = self.id
           ct.ordering_key = tweet.timestamp
           #save it 
-          ct.save
+          ct.save!
         end
         since_id = tweet.id_str
       end

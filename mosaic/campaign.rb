@@ -52,15 +52,10 @@ post '/campaigns/edit/:edit_link' do
   @campaign.page_title = params[:name]
   @campaign.description = params[:description]
   @campaign.cover_image = params[:cover_image]
+  @campaign.front_page = params[:front_page]
   @campaign.save!
   puts @campaign.inspect
   #get related terms
-  @terms = Term.all({:campaign_id => @campaign.id})
-    #with ajax interface
-  #photos to view in frame
-    #/mosaic/admin/:edit_link/p/:page
-      #show block
-      #show block user
   redirect '/campaigns/edit/' << @campaign.edit_link
 end
 
