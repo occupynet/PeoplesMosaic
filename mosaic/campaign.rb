@@ -22,7 +22,8 @@ post '/campaigns/create' do
   @terms = params[:search_terms].split(',')
   @terms.each do |term|
     t = Term.new
-    t.term = term.strip!
+    term.strip!
+    t.term = term
     t.campaign_id = @campaign.id
     t.since_id = 0
     t.last_checked = Time.now

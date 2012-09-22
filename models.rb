@@ -51,14 +51,15 @@ class Campaign
       #update since time for term
       #update since id for highest tweet id crawled
       puts since_id
-      term.since_id = since_id
-      term.last_checked = Time.now
-      term.save
+      Term.collection.update({:id=>term.id},{'$set'=>{:since_id=>since_id,:last_checked=>Time.now}},{:upsert=>false})
+#      term.since_id = since_id
+#      term.last_checked = Time.now
+#      term.save
     end
     #weird bug where a campaign would lose recently save-data.
     #suspect it was caused here, not sure
       Campaign.collection.update({:slug=>self.slug},  
-      {'$set'=>{:media_count=>CampaignMedia.count({:campaign_id=>self.id})}})
+      {'$set'=>{:media_count=>CampaignMedia.count({:hidden=>{'$exists'=>false},:campaign_id=>self.id})}})
    # self.save
   end
 
@@ -316,7 +317,7 @@ class NewTweet
       ct[1..x].each {|p|p.destroy}
     end
     
-    @prev_id="A"
+    @prev_id=""
     @cm = CampaignMedia.all({:order=>'media_id.asc'.to_sym})
     @cm.each do |cm|
       if cm.media_id == @prev_id
