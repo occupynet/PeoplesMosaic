@@ -58,16 +58,3 @@
         %div#infscr-loading
         %div#more 
           %a{:href=>"/page/"+@campaign.slug+"/"+@page.to_s}=@page.to_s
-          
-      :javascript
-        var pkBaseURL = (("https:" == document.location.protocol) ?
-        "https://analytics.occupy.net/" : "http://analytics.occupy.net/");
-        str = pkBaseURL + "piwik.js'" + "type='text/javascript'"
-        document.write(unescape("%3Cscript src='" + str + "%3E%3C/script%3E"));
-        try {
-        var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 30);
-        piwikTracker.trackPageView();
-        piwikTracker.enableLinkTracking();
-        } catch( err ) {}
-        
-    %img{:src=>"http://analytics.occupy.net/piwik.php?idsite=30" ,:style=>"border:0", :alt=>""}         
