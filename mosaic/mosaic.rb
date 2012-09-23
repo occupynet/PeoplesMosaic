@@ -59,7 +59,7 @@ end
 get '/:campaign_slug' do
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 50
+  m.page_size = 30
   @campaign = m.campaign
   @terms = Term.all({:campaign_id=>@campaign.id})
   @active = m.is_active?
@@ -71,10 +71,10 @@ get '/:campaign_slug' do
 end
 
 get '/page/?:campaign_slug/:page' do
-  @page = params[:page].to_i+1
+  @page = params[:page].to_i-1
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 50
+  m.page_size = 30
   @campaign = m.campaign
   @squares =m.grid(@page)
   @meta = m.meta_info
@@ -100,7 +100,7 @@ end
 get '/admin/campaigns/page/:edit_link/:page' do
   @campaign = Campaign.first({:edit_link=>params['edit_link']})
   if (@campaign)
-    @page = params[:page].to_i+1
+    @page = params[:page].to_i-1
     m = Mosaic.new(@campaign['slug'])
     m.set_sorting
     m.page_size = 50

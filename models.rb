@@ -222,6 +222,7 @@ class Term
          if a_tweet.attrs["entities"]
            if a_tweet.attrs["entities"]["urls"] !=nil
            a_tweet.attrs["entities"]["urls"].each do |url|
+             #corny method to traverse urls that have been encoded multiple times
              3.times do |x|
                begin 
                  url["expanded_url"].expand_urls!
@@ -272,6 +273,7 @@ class Term
            #kill the twitter ID so we get a mongoID object instead
            a_tweet.attrs['id'] = nil  
            #save / update
+           #save all tweets, to mine them later
            Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
            tweet =  Tweet.first({:id_str=>a_tweet.attrs["id_str"].to_s})
            tweet.build_hashtag_array

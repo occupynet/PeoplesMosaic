@@ -9,10 +9,9 @@ require 'time'
 require 'mm-sluggable'
 require 'youtube_it'
 require 'vimeo'
+require 'lib/expand_url.rb'
 
 require 'config.rb'
-#require 'crawler/crawler.rb'
-
 class Sinatra::Base
 set :protection, :except => :frame_options
 end

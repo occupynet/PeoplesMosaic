@@ -1,4 +1,5 @@
-
+#block and purge, ajax call - use sparingly
+#should have some kind of atuh attached to it
 get '/users/block/:user_id' do 
   #add user to blocks table
   #flag all existing tweets and crawled tweets to hide
