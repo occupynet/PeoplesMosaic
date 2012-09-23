@@ -35,15 +35,8 @@ end
 
 
 get '/campaigns/edit/:edit_link' do
-  #get campaign by edit link
   @campaign = Campaign.first({:edit_link =>params[:edit_link]})
-  #get related terms
   @terms = Term.all({:campaign_id => @campaign.id})
-    #with ajax interface
-  #photos to view in frame
-    #/mosaic/admin/:edit_link/p/:page
-      #show block
-      #show block user
   haml 'campaigns/edit'.to_sym
 end
 
@@ -60,30 +53,9 @@ post '/campaigns/edit/:edit_link' do
   redirect '/campaigns/edit/' << @campaign.edit_link
 end
 
-
-
-
-get '/campaigns/reformat' do 
-  @campaigns = Campaign.all
-  @campaigns.each do |c|
-    @c = Campaign.first(:id=>c.id)
-    if @c.conditions != nil
-      puts "campaign:"
-      puts @c.name
-      puts @c.conditions.inspect
-      puts @c.conditions['start_time']
-      st = c.conditions['start_time'].to_i
-      et = c.conditions['end_time'].to_i
-      @c.set(:edit_link => c.build_edit_link)
-      puts @c.inspect
-      @c.save
-        Campaign.collection.update({:slug=>@c.slug},{'$unset'=>{:conditions=>true}})
-    end
-  end
-  haml :about
-end
-
-get '/campaigns/build_collection' do
+class CampaignMedia
+  def build_collection 
+  
     #get each campaign
     @campaigns = Campaign.all
     @campaigns.each do |campaign|
@@ -114,7 +86,7 @@ get '/campaigns/build_collection' do
     Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
     tweets.each do |t|
       #build CM object
-  
+
       cmd = CampaignMedia.new
       CampaignMedia.collection.update({:campaign_id=>campaign.id, :media_id=>t.id_str.to_s,:media_type=>'tweet'},{:media_id => t.id_str,
         :media_type => 'tweet',
@@ -122,7 +94,8 @@ get '/campaigns/build_collection' do
         :ordering_key => t.timestamp},{:upsert=>true})
     end
   end
-      haml :about
+  haml :about
+  end
 end
 
 get '/campaigns/update/:edit_link' do
@@ -132,7 +105,9 @@ get '/campaigns/update/:edit_link' do
   redirect '/admin/campaigns/'<< @campaign.edit_link 
 end
 
+post '/campaigns/save_url/:edit_link/:url' do
 
+end
 
 post '/campaigns/add_term/:edit_link' do
   @campaign = Campaign.first({:edit_link=>params[:edit_link]})

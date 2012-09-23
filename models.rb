@@ -86,12 +86,10 @@ class CampaignMedia
   timestamps!
   
   
-  def save_from_url (url, edit_link)
-    c = Campaign.first({:edit_link=>edit_link})
+  def save_from_url (url,c)
     if (c.slug !=nil)
       self.campaign_id = c.id
       self.ordering_key = 'timestamp'
-
       if (url.split("twitter.com").size >1)
         #ugly split
         id = url.split("twitter.com")[1].split("/")[4]
@@ -249,7 +247,7 @@ class Term
              elsif (url["expanded_url"].split("ht.ly").size > 1)
                a_tweet.attrs["block"] =1
              #manually grab instagrams for the thumbnail
-             elsif (url["expanded_url"]).split("instagr.am").size > 1
+             elsif ((url["expanded_url"]).split("instagr.am").size > 1) || ((url["expanded_url"]).split("instagram.com").size > 1)
                begin OpenURI::HTTPError
                #add the media link
                  html = ""
