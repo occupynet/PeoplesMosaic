@@ -41,20 +41,21 @@
       %div{:style=>'height:120px'}
       %div#mosaic.mosaic
         - @squares.each do |square|
-          - if square["entities"]["media"][0]["media_url"] !=nil
-            %div.grid{:style=> "height:"<<square["entities"]["media"][0]["sizes"]["small"]["h"].to_s<<"px"}
-              %img.tile{:src=>square["entities"]["media"][0]["media_url"]}
-              %div.overlay
-                %div.user
-                  %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user
-                  %div.date
-                    %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str}= (Time.parse(square.created_at)).strftime("%I:%M%p %b %e, %Y")
-                %div.text
-                  = square.text
-          - if square["video_embed"] !=nil
-            %div.grid.video  
-              = square["video_embed"]
-      
+          - begin
+            - if square["entities"]["media"][0]["media_url"] !=nil
+              %div.grid{:style=> "height:"<<square["entities"]["media"][0]["sizes"]["small"]["h"].to_s<<"px"}
+                %img.tile{:src=>square["entities"]["media"][0]["media_url"]}
+                %div.overlay
+                  %div.user
+                    %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user
+                    %div.date
+                      %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str}= (Time.parse(square.created_at)).strftime("%I:%M%p %b %e, %Y")
+                  %div.text
+                    = square.text
+            - if square["video_embed"] !=nil
+              %div.grid.video  
+                = square["video_embed"]
+          - rescue
         %div#infscr-loading
         %div#more 
           %a{:href=>"/page/"+@campaign.slug+"/"+@page.to_s}=@page.to_s
