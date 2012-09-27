@@ -54,12 +54,26 @@ $(document).ready(function(){
       $(el).find(".block").unbind('click');
       $(el).find(".duplicates").unbind('click');
       $(el).find(".snapshots img.tile").unbind('click');
+      $(el).find(".tightgrid img.tile").unbind('click');
+      $(el).find(".tightgrid img.tile").unbind('hover');
       
       $(el).find(".snapshot img.tile").click(function(){
         var img = $(this).parent().find("div.fullsize").first();
         $("#bigpic").find(".caption").html($(this).parent().find(".caption").html())
-        showBigPic(img)}
-      )
+        showBigPic(img)
+        })
+      $(el).find(".tightgrid img.tile").hover(function(){
+        $("#overlay").html($(this).parent().find(".content").html());
+        console.log($(this).parent().find(".content").html())
+        $("#overlay").offset({top:$(this).offset().top-120, left:$(this).offset().left})
+        $("#overlay").show();
+      })
+      $(el).find(".tightgrid img.tile").click(function(){
+        var img = $(this).parent().find("div.fullsize").first();
+        $("#overlay").fadeOut('fast');
+        showBigPic(img)
+      })
+      
 
       $(el).find(".grid").each(function(i,e){
         var o = $(e).find(".overlay");
@@ -156,9 +170,9 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
         function( newElements ) {
           $mosaic.isotope( 'appended', $( newElements ) ); 
           setOverlays($('.mosaic').last());
-          if ($(".grid").size() > 480 ) {
+          if ($(".grid").size() > 400 ) {
             var g = $(".grid");
-            for (i=0; i < ($(".grid").size/12); i++) {
+            for (i=0; i < 60; i++) {
               $(g[i]).remove();
             }
             g = null;

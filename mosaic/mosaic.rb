@@ -88,40 +88,11 @@ get '/about' do
   haml :about
 end
 
-get '/cloud/:campaign_slug' do
-  m = Mosaic.new(params[:campaign_slug])
-  m.set_sorting
-  m.page_size = 100
-  @campaign = m.campaign
-  @terms = Term.all({:campaign_id=>@campaign.id})
-  @active = m.is_active?
-  @sorting = m.is_active? ? "newest" : "oldest"
-  @squares = m.cloud(0)
-  @page = 2
-  @meta = m.meta_info
-  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
-
-end
-
-get '/cloud/page/?:campaign_slug/:page' do
-  @page = params[:page].to_i-1
-  m = Mosaic.new(params[:campaign_slug])
-  m.set_sorting
-  m.page_size = 100
-  @campaign = m.campaign
-  @squares =m.cloud(@page)
-  @meta = m.meta_info
-  @terms = Term.all({:campaign_id=>@campaign.id})
-  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
-end
-
-
-
 
 get '/:campaign_slug' do
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 80
+  m.page_size = 60
   @campaign = m.campaign
   @terms = Term.all({:campaign_id=>@campaign.id})
   @active = m.is_active?
@@ -136,7 +107,7 @@ get '/page/?:campaign_slug/:page' do
   @page = params[:page].to_i-1
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 80
+  m.page_size = 60
   @campaign = m.campaign
   @squares =m.cloud(@page)
   @meta = m.meta_info

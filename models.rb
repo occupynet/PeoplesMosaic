@@ -117,7 +117,7 @@ class CampaignMedia
           a = AggregateMedia.first({:media_url=>url})
           a.increment(:score=>1)
           a.add_to_set(:campaign_id=>c.campaign_id)
-          a.push(:campaign_media_id=>c.id)
+          a.add_to_set(:campaign_media_id=>c.id)
         rescue
         end
       end
