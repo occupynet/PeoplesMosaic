@@ -37,20 +37,3 @@ get '/' do
   @campaigns = Campaign.all({:order=>'start_timestamp'.to_sym.desc,:conditions=>{:front_page=>'yes'}})
   haml :index
 end
-
-#copy tweets to campaigns_tweets collection which match photo conditions
-
-
-#tomorrow
-  #campaign interface
-  #add / edit campaign
-    #name
-    #description
-    #start_time
-    #end_time
-    #ordering
-    #media 
-      #text, video, picture
-    #terms
-      #twitter only, for now
-

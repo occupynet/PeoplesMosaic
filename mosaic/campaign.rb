@@ -12,11 +12,14 @@ post '/campaigns/create' do
   @campaign.description = params[:description]
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
-  @campaign.edit_link = @campaign.build_edit_link
   @campaign.cover_image = params[:cover_image]
   
   puts params[:start_date]
   puts params[:end_date]
+  #first save to build the slug
+  @campaign.save!
+  #now build the edit link with the slug and save again
+  @campaign.edit_link = @campaign.build_edit_link
   @campaign.save!
   #create terms for the crawler
   @terms = params[:search_terms].split(',')
@@ -51,51 +54,6 @@ post '/campaigns/edit/:edit_link' do
   puts @campaign.inspect
   #get related terms
   redirect '/campaigns/edit/' << @campaign.edit_link
-end
-
-class CampaignMedia
-  def build_collection 
-  
-    #get each campaign
-    @campaigns = Campaign.all
-    @campaigns.each do |campaign|
-      terms = Term.all({:campaign_id=>campaign.id})
-      tags = []
-      terms.each do |term|
-        tags << term['term'].gsub!('#','')
-      end
-      if terms.empty?
-        terms = {}
-      else
-        terms = {:ows_meta_tags=>tags}
-      end
-      #build conditions array
-      conditions = {
-        :conditions=>{
-          'entities.media.0.media_url'=>{'$exists'=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true},
-          :timestamp=> {'$gte'=>campaign[:start_timestamp],'$lte'=>campaign[:end_timestamp]},
-          :block=>{'$exists'=>false}.merge(terms)
-        }
-      }
-    puts conditions.inspect
-    #get all matching tweets
-    tweets = Tweet.all(conditions)
-    puts campaign.name
-    puts tweets.size
-    t_count = tweets.size
-    Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
-    tweets.each do |t|
-      #build CM object
-
-      cmd = CampaignMedia.new
-      CampaignMedia.collection.update({:campaign_id=>campaign.id, :media_id=>t.id_str.to_s,:media_type=>'tweet'},{:media_id => t.id_str,
-        :media_type => 'tweet',
-        :campaign_id => campaign.id,
-        :ordering_key => t.timestamp},{:upsert=>true})
-    end
-  end
-  haml :about
-  end
 end
 
 get '/campaigns/update/:edit_link' do

@@ -60,14 +60,24 @@
   >>>>better activity sorting - most updates in past month, week day hour
   social sharing header.  - facebook, twitter, iframe
   >>>>fb, twitter
+  
   a better way to remove dupes
   >>>>group by media_url
   new about page copy
-  remove redundant controller urls
+  DONEremove redundant controller urls
   remove batch routines
-  when selecting, group by media url, to remove duplicates
   mini-mosaic for embedding
-  don't do mm.save in crawler - do driver-level updates 
+  DONE don't do mm.save in crawler - do driver-level updates 
   DONE         crawl everything, so we can mine it later
+  free-university bug when loading page 2
+  add slug to the beginning of edit link so we know what link they are
   >>on-hover should always be clickable for frontpage images
-  
+  sync campaign.name and campaign.page_title
+  build an aggregate media collection
+  aafor each campaign
+  aaaascoop all media links
+  aaaaupsert by media_url
+  aaaaaaincrement count of each insert, plus retweet score
+  aaaaaaCM id in an array in aggregate media
+  aaaaaacampaign id in aggregate media
+      

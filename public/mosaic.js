@@ -35,27 +35,37 @@ $(document).ready(function(){
     $(this).parent().parent().fadeOut()
   })
   
-
+  var showBigPic = function(img){
+  $("#bigpic").find("img").attr("src",img.html());
+  $("#bigpic").css("width","100%");
+  $("#bigpic").css("top",$(window).scrollTop()+"px");
+  $("#bigpic").find("img").css("margin","0% 25%");
+  $("#bigpic").fadeIn();
   $("#bigpic").click(function(e){
-    e.stopPropagation();
-    $(this).fadeOut('fast');
-  });
+      e.stopPropagation();
+      $(this).fadeOut('fast');
+    });
+  } 
+  
+
     var setOverlays = function(el){
       $(el).find(".grid").unbind('hover') ;
       $(el).find(".overlay").unbind('click');
       $(el).find(".block").unbind('click');
       $(el).find(".duplicates").unbind('click');
+      $(el).find(".snapshots img.tile").unbind('click');
+      
+      $(el).find(".snapshot img.tile").click(function(){
+        var img = $(this).parent().find("div.fullsize").first();
+        $("#bigpic").find(".caption").html($(this).parent().find(".caption").html())
+        showBigPic(img)}
+      )
 
       $(el).find(".grid").each(function(i,e){
         var o = $(e).find(".overlay");
-        var img = $(e).find("img").first();
+        var img = $(e).find("div.fullsize").first();
         $(o).css("height",($(e).height()-40)+"px");
-        $(o).click(function(){
-          $("#bigpic").find("img").attr("src",img.attr("src"));
-          $("#bigpic").css("width","100%")
-          $("#bigpic").find("img").css("margin","0% 25%");
-          $("#bigpic").fadeIn();
-        })
+        $(o).click(function(){showBigPic(img)});
         
         $("div.block").click(function(){
 $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/'+$(this).attr('media_id'))
@@ -148,7 +158,7 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
           setOverlays($('.mosaic').last());
           if ($(".grid").size() > 480 ) {
             var g = $(".grid");
-            for (i=0; i < 30; i++) {
+            for (i=0; i < ($(".grid").size/12); i++) {
               $(g[i]).remove();
             }
             g = null;

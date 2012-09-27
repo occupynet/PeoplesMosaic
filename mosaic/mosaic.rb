@@ -2,9 +2,14 @@ require File.join(File.dirname(__FILE__),'campaign.rb')
 #get all of the photos within a grid size of x and y 
 
 class Mosaic 
-  attr_accessor :page_size, :campaign, :conditions, :meta_info, :sorting
+  attr_accessor :page_size, :campaign, :conditions, :meta_info, :sorting, :theme
   def initialize(slug)
     @campaign = Campaign.first(:slug=>slug)
+    if @campaign[:theme_id]==nil
+      @theme = Theme.first({:slug=>"default"})
+    else 
+      @theme = Theme.first({:id=>@campaign.theme_id})
+    end
   end
   
   def is_active?
@@ -23,6 +28,33 @@ class Mosaic
     end
   end
   
+  def cloud(skip)
+    @conditions = {
+      :limit=>@page_size, :skip=>skip * @page_size,:order=>@sorting,
+      :conditions=>{:campaign_id=>@campaign.id, :hidden=>{'$exists'=>false}}
+    }
+    @meta_info = {:page_title => @campaign['page_title'], :description => @campaign['description']}
+   cm = AggregateMedia.all(@conditions)
+   tweets = []
+   h = {}
+   cm.each do |c|
+     t = Tweet.first({:id_str=>c.media_id.to_s})
+     t.score = c.score
+     t.sized =( Math.log(c.score) / Math.log(2)).ceil+1
+     begin
+       t.sizes = t["entities"]["media"][0]["sizes"]
+     rescue
+       t.sizes = Hash.new
+       t.sizes["small"] = {"w"=>150, "h"=>150,"fartle"=>"foo"}
+     end
+     
+     t.dimensions!(90)
+     tweets << t
+   end
+   tweets
+ end
+    
+    
   def grid(skip)
     #get our Campaign object
     #get CampaignMedia that match campaign ID
@@ -56,30 +88,60 @@ get '/about' do
   haml :about
 end
 
-get '/:campaign_slug' do
+get '/cloud/:campaign_slug' do
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 30
+  m.page_size = 100
   @campaign = m.campaign
   @terms = Term.all({:campaign_id=>@campaign.id})
   @active = m.is_active?
   @sorting = m.is_active? ? "newest" : "oldest"
-  @squares = m.grid(0)
+  @squares = m.cloud(0)
   @page = 2
   @meta = m.meta_info
-  haml 'mosaic/grid'.to_sym  
+  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
+
+end
+
+get '/cloud/page/?:campaign_slug/:page' do
+  @page = params[:page].to_i-1
+  m = Mosaic.new(params[:campaign_slug])
+  m.set_sorting
+  m.page_size = 100
+  @campaign = m.campaign
+  @squares =m.cloud(@page)
+  @meta = m.meta_info
+  @terms = Term.all({:campaign_id=>@campaign.id})
+  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
+end
+
+
+
+
+get '/:campaign_slug' do
+  m = Mosaic.new(params[:campaign_slug])
+  m.set_sorting
+  m.page_size = 80
+  @campaign = m.campaign
+  @terms = Term.all({:campaign_id=>@campaign.id})
+  @active = m.is_active?
+  @sorting = m.is_active? ? "newest" : "oldest"
+  @squares = m.cloud(0)
+  @page = 2
+  @meta = m.meta_info
+  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
 end
 
 get '/page/?:campaign_slug/:page' do
   @page = params[:page].to_i-1
   m = Mosaic.new(params[:campaign_slug])
   m.set_sorting
-  m.page_size = 30
+  m.page_size = 80
   @campaign = m.campaign
-  @squares =m.grid(@page)
+  @squares =m.cloud(@page)
   @meta = m.meta_info
   @terms = Term.all({:campaign_id=>@campaign.id})
-  haml 'mosaic/grid'.to_sym  
+  haml ('mosaic/themes/'+m.theme.template_name).to_sym  
 end
 
 

@@ -2,8 +2,10 @@ class Campaign
   include MongoMapper::Document
   plugin MongoMapper::Plugins::Sluggable
   sluggable :name
+  belongs_to :theme
   many :terms
   key :page_title
+  key :theme_id, ObjectId
 #  deprecated?
 #  key :slug, String, :required => true
   key :name, String, :required => true
@@ -69,7 +71,7 @@ class Campaign
   def build_edit_link
     #if no edit link
     if self.edit_link ==nil
-      (0...31).map{97.+(rand(26)).chr}.join
+      self.slug << (0...31).map{97.+(rand(26)).chr}.join
     end
   end
 end
@@ -84,6 +86,84 @@ class CampaignMedia
   key :media_type, String
   key :ordering_key 
   timestamps!
+  
+  
+  def aggregate_media
+    #build an aggregate media collection
+    # for each campaign
+    #    scoop all media links
+    #    upsert by media_url
+    #      increment count of each insert, plus retweet score
+    #      CM id in an array in aggregate media
+    #      campaign id in aggregate media
+    #reverse chronological order so the final aggrgated media key is the original tweet
+
+    @campaigns = Campaign.all
+    @campaigns.each do |campaign|
+      cm = CampaignMedia.all({
+        :conditions=>
+          {:campaign_id=>campaign.id},
+        :order=>[:ordering_key,'desc']})
+      cm.each do |c|
+        t = Tweet.first({:id_str=>c.media_id})
+        begin
+          url = t['entities']['media'][0]['media_url']
+          v = {:media_url=>url,
+            :media_type=>c.media_type, 
+            :ordering_key=>c.ordering_key,
+            :media_id=>c.media_id}
+            
+          AggregateMedia.collection.update({:media_url=>url},{'$set'=>v},{:upsert=>true})
+          a = AggregateMedia.first({:media_url=>url})
+          a.increment(:score=>1)
+          a.add_to_set(:campaign_id=>c.campaign_id)
+          a.push(:campaign_media_id=>c.id)
+        rescue
+        end
+      end
+    end
+  end
+  def build_collection 
+  
+    #get each campaign
+    @campaigns = Campaign.all
+    @campaigns.each do |campaign|
+      terms = Term.all({:campaign_id=>campaign.id})
+      tags = []
+      terms.each do |term|
+        tags << term['term'].gsub!('#','')
+      end
+      if terms.empty?
+        terms = {}
+      else
+        terms = {:ows_meta_tags=>tags}
+      end
+      #build conditions array
+      conditions = {
+        :conditions=>{
+          'entities.media.0.media_url'=>{'$exists'=>true}, 'entities.media.0.sizes.small.h'=>{:$exists=>true},
+          :timestamp=> {'$gte'=>campaign[:start_timestamp],'$lte'=>campaign[:end_timestamp]},
+          :block=>{'$exists'=>false}.merge(terms)
+        }
+      }
+    puts conditions.inspect
+    #get all matching tweets
+    tweets = Tweet.all(conditions)
+    puts campaign.name
+    puts tweets.size
+    t_count = tweets.size
+    Campaign.collection.update({:slug=>campaign[:slug]},{'$set'=>{:media_count=>t_count}})
+    tweets.each do |t|
+      #build CM object
+
+      cmd = CampaignMedia.new
+      CampaignMedia.collection.update({:campaign_id=>campaign.id, :media_id=>t.id_str.to_s,:media_type=>'tweet'},{:media_id => t.id_str,
+        :media_type => 'tweet',
+        :campaign_id => campaign.id,
+        :ordering_key => t.timestamp},{:upsert=>true})
+      end
+    end
+  end
   
   
   def save_from_url (url,c)
@@ -126,6 +206,7 @@ end
 class Tweet
   include MongoMapper::Document
   key :ows_meta_tags, Array
+  attr_accessor :dims, :image_size, :score, :sized, :sizes
   def removeIds
     
   end
@@ -133,7 +214,47 @@ class Tweet
   def removeRetweets
     
   end
+  def dimensions!(pixels)
+    pixels = @sized.to_i * pixels
+    @image_size = ":small"
+    begin
+      if (@sizes["thumb"] !=nil)
+        @image_size =":small"
+      end
+    rescue
+        @image_size = ""
+    end
+    r = 1
+    h = pixels
+    biggest = 1
+    begin
+    d = @sizes["small"]
+    d["w"] = d["w"]/2
+    d["h"] = d["h"]/2
+    #@sizes.keys.reverse.each do |k|
+    #  if (pixels > @sizes[k]["w"].to_i) && (@sizes[k]["w"].to_i>biggest)
+    #    @image_size = k
+    #    d = @sizes[k]
+    #    biggest = @sizes[k]["w"]
+    #  end
+    #end
+    #h = (d["h"] /d['w']) * pixels
+    @dims = {:width=>d["w"]*@sized.to_i, :height=>d["h"]* @sized.to_i}
+  rescue
+    @dims = {:width=>pixels, :height=>pixels}
+  end
+    true
+  end
   
+  def sizes?
+    begin
+      if @sizes["large"] !=nil
+        true
+      end
+    rescue
+      false
+    end
+  end
   def build_hashtag_array
     tags = []
     if ( (! self.entities.empty?)  && self['entities']['hashtags'] !=nil)
@@ -192,7 +313,7 @@ class Term
      15.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>self.since_id, :until=>date_until,:include_entities=>1}
+         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>self.since_id, :until=>date_until,:include_entities=>true}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
        rescue
          puts "bad gateway"
@@ -305,6 +426,14 @@ CampaignMedia.ensure_index([[:media_id, 1],[:campaign_id,1]],:unique=>true)
 CampaignMedia.ensure_index([[:ordering_key,1]])
 CampaignMedia.ensure_index([[:ordering_key,-1]])
 
+class AggregateMedia
+  include MongoMapper::Document
+  key :media_url, String
+  key :campaign_id, Array
+  key :campaign_media_id, Array
+  key :score, Integer, :default=>0
+end
+AggregateMedia.ensure_index(:score)
 
 class NewTweet
   include MongoMapper::Document
@@ -333,3 +462,12 @@ class NewTweet
   end
 end
 
+class Theme
+  include MongoMapper::Document
+  plugin MongoMapper::Plugins::Sluggable
+  sluggable :name
+  key :name, String
+  key :template_name, String
+  key :cover_image, String
+end
+  
