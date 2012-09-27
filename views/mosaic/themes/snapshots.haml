@@ -45,15 +45,15 @@
         - @squares.each do |square|
           - begin
             - if square["entities"]["media"][0]["media_url"] !=nil
-              %div.grid.snapshot{:style=>"width:"+(128 * square["sized"].to_i).to_s+"px; float:left; min-height:"+(128 * square["sized"].to_i).to_s+"px; float:left"}
-                %img.tile{:src=>square["entities"]["media"][0]["media_url"]+((128 * square["sized"].to_i > 340) ? ":medium" : ":small"), :style=> "width:"+(128 * square["sized"].to_i).to_s+"px"}
+              %div.grid.snapshot{:style=>"width:"+(128 * square.sized.to_i).to_s+"px; float:left; min-height:"+(128 * square.sized.to_i).to_s+"px; float:left"}
+                %img.tile{:src=>square["entities"]["media"][0]["media_url"]+((128 * square.sized.to_i > 340) ? ":medium" : ":small"), :style=> "width:"+(128 * square.sized.to_i).to_s+"px"}
                 %div.fullsize{:style=>"display:none"}
                   =square["entities"]["media"][0]["media_url"]+":large"
                 %div.caption{:style=>"display:none"}
                   %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str} 
                     =square["text"]
                  
-                %div.user{:style=> "width:"+(128 * square["sized"].to_i).to_s+"px"}
+                %div.user{:style=> "width:"+(128 * square.sized.to_i).to_s+"px"}
                   %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user
                   %div.date
                     %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str}= (Time.parse(square.created_at)).strftime("%I:%M%p %b %e, %Y")
