@@ -97,8 +97,8 @@ class CampaignMedia
     #      CM id in an array in aggregate media
     #      campaign id in aggregate media
     #reverse chronological order so the final aggrgated media key is the original tweet
-
-    @campaigns = Campaign.all
+    #skip the blocked media
+    @campaigns = Campaign.all({:hidden=>{'$exists'=>false}})
     @campaigns.each do |campaign|
       cm = CampaignMedia.all({
         :conditions=>
@@ -112,7 +112,6 @@ class CampaignMedia
             :media_type=>c.media_type, 
             :ordering_key=>c.ordering_key,
             :media_id=>c.media_id}
-            
           AggregateMedia.collection.update({:media_url=>url},{'$set'=>v},{:upsert=>true})
           a = AggregateMedia.first({:media_url=>url})
           a.increment(:score=>1)
