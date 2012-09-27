@@ -45,6 +45,8 @@
             - if square["entities"]["media"][0]["media_url"] !=nil
               %div.grid{:style=> "height:"<<square["entities"]["media"][0]["sizes"]["small"]["h"].to_s<<"px"}
                 %img.tile{:src=>square["entities"]["media"][0]["media_url"]+":small"}
+                %div.fullsize{:style=>"display:none"}
+                  =square["entities"]["media"][0]["media_url"]+":large"
                 %div.overlay
                   %div.user
                     %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user

@@ -228,9 +228,9 @@ class Tweet
     h = pixels
     biggest = 1
     begin
-    d = @sizes["small"]
-    d["w"] = d["w"]/2
-    d["h"] = d["h"]/2
+    d = @sizes["medium"]
+    d["w"] = d["w"]/4
+    d["h"] = d["h"]/4
     #@sizes.keys.reverse.each do |k|
     #  if (pixels > @sizes[k]["w"].to_i) && (@sizes[k]["w"].to_i>biggest)
     #    @image_size = k
