@@ -113,6 +113,7 @@ get '/campaigns/block/:campaign_slug/:edit_link/:id' do
   if (@c['edit_link']==params[:edit_link])
     Tweet.collection.update({:id_str=>params[:id]},{'$set'=>{:block=>true}})
     CampaignMedia.collection.update({:campaign_id=>@c.id, :media_id=>params[:id]},{'$set'=>{:hidden=>true}})
+    AggregateMedia.collection.update({:campaign_id=>@c.id, :campaign_media_id=>params[:id]},{'$set'=>{:hidden=>true}})
     @t = Tweet.first({:id_str=>params[:id]})
     haml 'campaigns/block'.to_sym
   end
