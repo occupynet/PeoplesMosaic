@@ -40,7 +40,7 @@ class Mosaic
    cm.each do |c|
      t = Tweet.first({:id_str=>c.media_id.to_s})
      t.score = c.score
-     sc = (c.score < 1)  1 : c.score
+     sc = (c.score < 1) ?  1 : c.score
      t.sized =( Math.log(sc) / Math.log(2)).ceil+1
      begin
        t.sizes = t["entities"]["media"][0]["sizes"]
