@@ -13,13 +13,11 @@ post '/campaigns/create' do
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
   @campaign.cover_image = params[:cover_image]
-  
+  @campaign.edit_link = @campaign.build_edit_link
   puts params[:start_date]
   puts params[:end_date]
   #first save to build the slug
-  @campaign.save!
   #now build the edit link with the slug and save again
-  @campaign.edit_link = @campaign.build_edit_link
   @campaign.save!
   #create terms for the crawler
   @terms = params[:search_terms].split(',')

@@ -84,7 +84,7 @@ class Campaign
   def build_edit_link
     #if no edit link
     if self.edit_link ==nil
-      self.slug << (0...31).map{97.+(rand(26)).chr}.join
+      (0...31).map{97.+(rand(26)).chr}.join
     end
   end
 end
