@@ -47,6 +47,19 @@ class Campaign
           ct.ordering_key = tweet.timestamp
           #save it 
           ct.save!
+          #and the aggreate table
+          puts tweet.entities.inspect
+          url = tweet["entities"]["media"][0]["media_url"]
+          v = {:media_url=>url,
+            :media_type=>"tweet", 
+            :ordering_key=>ct.ordering_key,
+            :media_id=>ct.media_id}
+          AggregateMedia.collection.update({:media_url=>url},{'$set'=>v},{:upsert=>true})
+          a = AggregateMedia.first({:media_url=>url})
+          a.add_to_set(:campaign_id=>ct.campaign_id)
+          a.add_to_set(:campaign_media_id=>ct.id)
+          a.set(:score=>a.campaign_media_id.size)
+
         end
         since_id = tweet.id_str
       end
@@ -61,7 +74,7 @@ class Campaign
     #weird bug where a campaign would lose recently save-data.
     #suspect it was caused here, not sure
       Campaign.collection.update({:slug=>self.slug},  
-      {'$set'=>{:media_count=>CampaignMedia.count({:hidden=>{'$exists'=>false},:campaign_id=>self.id})}})
+      {'$set'=>{:media_count=>AggregateMedia.count({:hidden=>{'$exists'=>false},:campaign_id=>self.id})}})
    # self.save
   end
 
