@@ -21,6 +21,13 @@ MongoMapper::connection = Mongo::Connection.new(@db_server)
 MongoMapper::database = @db_name
 
 
+class Float
+  def clip(max)
+    self > max ? max : self  
+  end
+end
+
+
 #mongodb collection classes
 require 'models.rb'
 Twitter.configure do |config|

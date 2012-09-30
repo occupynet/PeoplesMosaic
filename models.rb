@@ -214,7 +214,6 @@ class CampaignMedia
   end
   
 end
-
 class Tweet
   include MongoMapper::Document
   key :ows_meta_tags, Array
@@ -241,18 +240,24 @@ class Tweet
     biggest = 1
     begin
     d = @sizes["medium"]
+    puts "original size"+d.inspect
     d["w"] = d["w"]/4
     d["h"] = d["h"]/4
-    #@sizes.keys.reverse.each do |k|
-    #  if (pixels > @sizes[k]["w"].to_i) && (@sizes[k]["w"].to_i>biggest)
-    #    @image_size = k
-    #    d = @sizes[k]
-    #    biggest = @sizes[k]["w"]
-    #  end
-    #end
-    #h = (d["h"] /d['w']) * pixels
-    @dims = {:width=>d["w"]*@sized.to_i, :height=>d["h"]* @sized.to_i}
-  rescue
+    pixels = d["w"] * @sized.to_i
+
+    @sizes.keys.reverse.each do |k|
+      if (pixels > @sizes[k]["w"].to_i)
+        @image_size = ":"+k
+        d = @sizes[k]
+        biggest = @sizes[k]["w"]
+      end
+    end
+    pixels = (pixels > @sizes["large"]["w"]) ? @sizes["large"]["w"] : pixels
+    h = (d["h"].to_f / d['w'].to_f) * pixels.to_f
+    ww = (d["w"]*@sized.to_i).to_f.clip(@sizes["large"]["w"])
+    hh = (d["h"]*@sized.to_i).to_f.clip(@sizes["large"]["h"])
+    @dims = {:width=>ww, :height=>hh}
+  rescue Exception=>ex
     @dims = {:width=>pixels, :height=>pixels}
   end
     true
