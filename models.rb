@@ -272,6 +272,14 @@ class Tweet
       false
     end
   end
+  
+  def not_instagram!(url)
+    if url.split("instagram") > 1
+      @image_size = ""
+    else
+    end
+  end
+  
   def build_hashtag_array
     tags = []
     if ( (! self.entities.empty?)  && self['entities']['hashtags'] !=nil)
