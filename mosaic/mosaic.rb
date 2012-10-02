@@ -43,7 +43,7 @@ class Mosaic
      sc = (c.score < 1) ?  0 : Math.log(c.score)
      t.sized =(sc / Math.log(3)).ceil+1
      begin
-       t.sizes = t["entities"]["media"][0]["sizes"]
+       t.sizes = t["entities"]["media"][0]["size"]
      rescue
        t.sizes = Hash.new
        t.sizes["small"] = {"w"=>150, "h"=>150}
@@ -51,8 +51,10 @@ class Mosaic
      
      t.dimensions!(90)
      begin
-      t.not_instagram!(t["entities"]["media"][0]["sizes"])
-     rescue
+      t.not_instagram!(t["entities"]["media"][0]["media_url"].to_s)
+      puts t["entities"]["media"][0].inspect
+      rescue Exception =>ex
+	puts ex.inspect
      end
      tweets << t
    end

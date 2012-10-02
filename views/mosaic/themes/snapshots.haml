@@ -46,7 +46,7 @@
           - begin
             - if square["entities"]["media"][0]["media_url"] !=nil
               %div.grid.snapshot{:style=>"width:"+(128 * square.sized.to_i).to_s+"px; float:left; min-height:"+(128 * square.sized.to_i).to_s+"px; float:left"}
-                %img.tile{:src=>square["entities"]["media"][0]["media_url"]+((128 * square.sized.to_i > 340) ? ":medium" : ":small"), :style=> "width:"+(128 * square.sized.to_i).to_s+"px"}
+                %img.tile{:src=>square["entities"]["media"][0]["media_url"]+square.image_size, :style=> "width:"+(128 * square.sized.to_i).to_s+"px"}
                 %div.fullsize{:style=>"display:none"}
                   =square["entities"]["media"][0]["media_url"]+":large"
                 %div.caption{:style=>"display:none"}
