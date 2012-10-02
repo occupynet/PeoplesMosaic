@@ -51,7 +51,7 @@ class Mosaic
      
      t.dimensions!(90)
      begin
-      t.not_instagram!(t["entities"]["media"][0]["sizes"])
+      t.not_instagram!(t["entities"]["media"][0]["media_url"])
      rescue
      end
      tweets << t
