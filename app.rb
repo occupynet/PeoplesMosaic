@@ -31,7 +31,7 @@ end
 
 
 #mongodb collection classes
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/models.rb'
+require File.expand_path(File.dirname(__FILE__)+'/peoplesmosaic/models.rb')
 Twitter.configure do |config|
   config.consumer_key = @twitter_consumer 
   config.consumer_secret = @twitter_consumer_secret
@@ -39,7 +39,7 @@ Twitter.configure do |config|
   config.oauth_token_secret = @twitter_oauth_secret
 end
 
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/mosaic/mosaic.rb'
+require File.expand_path(File.dirname(__FILE__)+'/peoplesmosaic/mosaic/mosaic.rb')
 
 #a homepage of mosaics, with a representative image (pinterest style :/ )
 get '/' do
