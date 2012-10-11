@@ -10,9 +10,10 @@ require 'time'
 require 'mm-sluggable'
 require 'youtube_it'
 require 'vimeo'
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/lib/expand_url.rb'
+require File.expand_path(File.dirname(__FILE__)+'/lib/expand_url.rb')
 
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/config.rb'
+require File.expand_path(File.dirname(__FILE__)+'/config.rb')
+
 class Sinatra::Base
 set :protection, :except => :frame_options
 end
