@@ -348,7 +348,7 @@ class Term
        rescue
          puts "bad gateway"
          sleep 30
-         tweets = Twitter.search(self.term.to_s + " -rt", query)   
+         tweets = []
        end
        begin 
          puts tweets.size
