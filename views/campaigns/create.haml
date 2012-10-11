@@ -16,11 +16,20 @@
       %div
         %label
           Description
-        %input{:type => 'textarea', :name => 'description', :value => @campaign.description}
+        %textarea{:name => 'description', :value => @campaign.description}
       %div
         %label
           Cover Image Url
         %input{:type => 'text', :name => 'cover_image', :value => @campaign.cover_image }
+      
+      %div
+        %label
+          Theme
+        %div
+          %select{:name => 'theme_id'}
+            - @themes.each do |theme|
+              %option{:selected=>(theme.id==@campaign.theme_id) ? "selected" : nil, :value=>theme.id} 
+                =theme.name
       %div
         %label
           Start Date (MM-DD-YYYY)

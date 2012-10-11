@@ -40,7 +40,8 @@
             %div.terms.clearoverlay
               - campaign.terms.each do |term|
                 %div.term
-                  = term.term
+                  %a{:href=>campaign.slug, :style=>'color:#ffffff'} 
+                    = term.term
           -if campaign.cover_image.to_s.length > 1
             %a{:href=>campaign.slug}
               %img{:src=>campaign.cover_image}
@@ -68,7 +69,6 @@
   remove batch routines
   mini-mosaic for embedding
   free-university bug when loading page 2
-  >>on-hover should always be clickable for frontpage images
   aggregate media - increment count of each insert, plus retweet score
   date range on campaign edit
   rename ["entities"]["media"]x["size"] to "sizes"

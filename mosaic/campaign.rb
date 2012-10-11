@@ -2,6 +2,7 @@ get '/campaigns/create' do
   @terms = []
   @campaign = Campaign.new
   @campaign.edit_link =""
+  @themes = Theme.all
   haml 'campaigns/create'.to_sym
 end
 
@@ -13,6 +14,7 @@ post '/campaigns/create' do
   @campaign.start_timestamp = Time.parse(params[:start_date].to_s).to_i
   @campaign.end_timestamp = Time.parse(params[:end_date].to_s).to_i
   @campaign.cover_image = params[:cover_image]
+  @campaign.theme_id = params[:theme_id]
   @campaign.edit_link = @campaign.build_edit_link
   puts params[:start_date]
   puts params[:end_date]
@@ -31,27 +33,30 @@ post '/campaigns/create' do
     t.save
   end
   @terms = Term.all({:campaign_id => @campaign.id})
-  redirect '/campaigns/edit/' << @campaign.edit_link
+  redirect '/campaigns/edit/'<<@campaign.slug<<'/'<< @campaign.edit_link
 end
 
 
-get '/campaigns/edit/:edit_link' do
+get '/campaigns/edit/:slug/:edit_link' do
   @campaign = Campaign.first({:edit_link =>params[:edit_link]})
   @terms = Term.all({:campaign_id => @campaign.id})
+  @theme = Theme.first({:id=>@campaign.theme_id})
+  @themes = Theme.all
   haml 'campaigns/edit'.to_sym
 end
 
-post '/campaigns/edit/:edit_link' do
+post '/campaigns/edit/:slug/:edit_link' do
   #get campaign by edit link
   @campaign = Campaign.first({:edit_link =>params[:edit_link]})
   @campaign.page_title = params[:name]
   @campaign.description = params[:description]
   @campaign.cover_image = params[:cover_image]
   @campaign.front_page = params[:front_page]
+  @campaign.theme_id = params[:theme_id]
   @campaign.save!
   puts @campaign.inspect
   #get related terms
-  redirect '/campaigns/edit/' << @campaign.edit_link
+  redirect '/campaigns/edit/'<<@campaign.slug<<'/'<< @campaign.edit_link
 end
 
 get '/campaigns/update/:edit_link' do

@@ -3,12 +3,22 @@
     =@campaign.name
   %div#left
     %h1 Edit Information
-    %form{:action => '/campaigns/edit/'<<@campaign.edit_link, :method => 'post'}
+    %form{:action => '/campaigns/edit/'<<@campaign.slug<<'/'<<@campaign.edit_link, :method => 'post'}
     
       %div
         %label
           Description
-        %input{:type => 'textarea', :name => 'description', :value => @campaign.description}
+        %textarea{:name => 'description'}
+          =@campaign.description
+      %div
+        %label
+          Theme
+        %div
+          =@campaign.inspect
+          %select{:name => 'theme_id'}
+            - @themes.each do |theme|
+              %option{:selected=>(theme.id==@campaign.theme_id) ? "selected" : nil, :value=>theme.id} 
+                =theme.name
       %div
         %label
           Cover Image Url
@@ -28,8 +38,8 @@
     %div#edit_link
       This is the link to your campaign.  Anyone who has this link can edit your campaign, so you may share it with other members of your organization.  
       %h2
-        %a{:href=>'/campaigns/edit/'<<@campaign.edit_link}
-          = 'http://mosaic.occupy.net/campaigns/edit/'<<@campaign.edit_link
+        %a{:href=>'/campaigns/edit/'+@campaign.slug+'/'+@campaign.edit_link}
+          = 'http://mosaic.occupy.net/campaigns/edit/'+@campaign.slug+'/'+@campaign.edit_link
 
   %div#right
     %div#terms

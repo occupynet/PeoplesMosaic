@@ -113,7 +113,7 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
           return $elem.find('.name').first().text()
         },
         activity: function ($elem) {
-          return parseInt($elem.find('.numImages').first().text())*(-1)
+          return parseInt($elem.find('.activityScore').first().text())*(-1)
         }
       }    
     });
@@ -181,6 +181,6 @@ $.ajax('/campaigns/block/'+$(this).attr('slug')+'/'+$(this).attr('edit_link')+'/
       );
     //set display to ALL
     window.setTimeout(function(){
-      $(".optionset .button").first().click();
+      $("#activitySort").first().click();
     },1000)
 })
