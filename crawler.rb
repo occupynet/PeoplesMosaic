@@ -9,7 +9,7 @@ require 'mm-sluggable'
 require 'youtube_it'
 require 'vimeo'
 
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/config.rb'
+require File.expand_path(File.dirname(__FILE__)+'/config.rb')
 #require 'crawler/crawler.rb'
 
 #mongo
@@ -18,7 +18,7 @@ MongoMapper::database = @db_name
 
 
 #mongodb collection classes
-require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/models.rb'
+require File.expand_path(File.dirname(__FILE__)+'/models.rb')
 Twitter.configure do |config|
   config.consumer_key = @twitter_consumer 
   config.consumer_secret = @twitter_consumer_secret

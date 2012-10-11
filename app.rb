@@ -52,7 +52,7 @@ get '/' do
       :conditions=>{:campaign_id => campaign.id, :ordering_key=>{'$gte'=>Time.now.to_i-86400}}})
     score = score * 10
     score = score + CampaignMedia.count({:order=>'ordering_key'.to_sym.desc, :limit=>50, 
-      :conditions=>{:campaign_id => campaign.id, :ordering_key=>{'$gte'=>Time.now.to_i-(86400*5)}}})
+      :conditions=>{:campaign_id => campaign.id, :ordering_key=>{'$lte'=>Time.now.to_i- 86400, '$gte'=>Time.now.to_i-(86400*5)}}})
       campaign['activity_score'] = score
     @campaigns<<campaign
   end
