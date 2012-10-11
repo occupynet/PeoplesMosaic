@@ -1,0 +1,9 @@
+source "http://rubygems.org"
+gem 'sinatra'
+gem 'mongo_mapper'
+gem 'twitter'
+gem 'hpricot'
+gem 'haml'
+gem 'mm-sluggable'
+gem 'youtube_it'
+gem 'vimeo'
