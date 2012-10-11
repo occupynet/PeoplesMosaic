@@ -18,6 +18,7 @@
           %h1
             =@meta[:page_title]
           %a{:href=>"/about"}About
+      %div{:style=>'height:120px'}
       %div#mosaic.mosaic
         - @squares.each do |square|
           -begin

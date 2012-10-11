@@ -274,9 +274,14 @@ class Tweet
   end
   
   def not_instagram!(url)
-    if url.split("instagram") > 1
+    if url.split("instagram").size > 1
       @image_size = ""
+      puts "url" + url
+      puts "is instagram"
+
     else
+    puts "url"+  url
+ 	puts "is not instagram"
     end
   end
   

@@ -24,7 +24,7 @@
           Date
         %div.button{:dataOptionValue=>'alphabetical'}
           Name
-        %div.button{:dataOptionValue=>'activity'}
+        %div#activitySort.button{:dataOptionValue=>'activity'}
           Activity
   %br{:clear=>'all'}
   %div#mosaic.campaigns
@@ -49,37 +49,29 @@
           = campaign.description
           %div.numImages{:style=>'display:none'}
             =campaign.media_count
+          %div.activityScore{:style=>'display:none'}
+            =campaign['activity_score']
           %div.count  
             %a{:href=>campaign.slug}
               = campaign.media_count.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
               Images
-
+              = campaign['activity_score']
           
 %div{:style=>'display:none'}
   highlight active / inactive campaigns - isotope buttons to order by name, oldest, newest, active, archive, size
-  >>>>better activity sorting - most updates in past month, week day hour
   social sharing header.  - facebook, twitter, iframe
   >>>>fb, twitter
   
   a better way to remove dupes
   >>>>group by media_url
   new about page copy
-  DONEremove redundant controller urls
   remove batch routines
   mini-mosaic for embedding
-  DONE don't do mm.save in crawler - do driver-level updates 
-  DONE         crawl everything, so we can mine it later
   free-university bug when loading page 2
-  add slug to the beginning of edit link so we know what link they are
   >>on-hover should always be clickable for frontpage images
-  sync campaign.name and campaign.page_title
-  build an aggregate media collection
-  aafor each campaign
-  aaaascoop all media links
-  aaaaupsert by media_url
-  aaaaaaincrement count of each insert, plus retweet score
-  aaaaaaCM id in an array in aggregate media
-  aaaaaacampaign id in aggregate media
+  aggregate media - increment count of each insert, plus retweet score
   date range on campaign edit
-  year first on dates
-      
+  rename ["entities"]["media"]x["size"] to "sizes"
+  rake
+  tests
+  

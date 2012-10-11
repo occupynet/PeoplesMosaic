@@ -9,9 +9,9 @@ require 'time'
 require 'mm-sluggable'
 require 'youtube_it'
 require 'vimeo'
-require 'lib/expand_url.rb'
+require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/lib/expand_url.rb'
 
-require 'config.rb'
+require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/config.rb'
 class Sinatra::Base
 set :protection, :except => :frame_options
 end
@@ -29,7 +29,7 @@ end
 
 
 #mongodb collection classes
-require 'models.rb'
+require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/models.rb'
 Twitter.configure do |config|
   config.consumer_key = @twitter_consumer 
   config.consumer_secret = @twitter_consumer_secret
@@ -37,10 +37,22 @@ Twitter.configure do |config|
   config.oauth_token_secret = @twitter_oauth_secret
 end
 
-require 'mosaic/mosaic.rb'
+require '/Users/thomasgillis/dev/ruby-dev/peoplesmosaic/mosaic/mosaic.rb'
 
 #a homepage of mosaics, with a representative image (pinterest style :/ )
 get '/' do
-  @campaigns = Campaign.all({:order=>'start_timestamp'.to_sym.desc,:conditions=>{:front_page=>'yes'}})
+  
+  undordered_campaigns = Campaign.all({:order=>'start_timestamp'.to_sym.desc,:conditions=>{:front_page=>'yes'}})
+  @campaigns = []
+  undordered_campaigns.each do |campaign|
+    score = 0
+    score = CampaignMedia.count({:order=>'ordering_key'.to_sym.desc, :limit=>50, 
+      :conditions=>{:campaign_id => campaign.id, :ordering_key=>{'$gte'=>Time.now.to_i-86400}}})
+    score = score * 10
+    score = score + CampaignMedia.count({:order=>'ordering_key'.to_sym.desc, :limit=>50, 
+      :conditions=>{:campaign_id => campaign.id, :ordering_key=>{'$gte'=>Time.now.to_i-(86400*5)}}})
+      campaign['activity_score'] = score
+    @campaigns<<campaign
+  end
   haml :index
 end
