@@ -343,7 +343,7 @@ class Term
      15.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>100, :page => (p+1).to_i,:since_id =>self.since_id, :until=>date_until,:include_entities=>true}
+         query = {:rpp=>100, :page=>"2", :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
        rescue
          puts "bad gateway"
@@ -464,6 +464,7 @@ class AggregateMedia
   key :score, Integer, :default=>0
 end
 AggregateMedia.ensure_index(:score)
+
 
 class NewTweet
   include MongoMapper::Document

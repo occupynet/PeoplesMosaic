@@ -52,10 +52,8 @@ class Mosaic
      t.dimensions!(90)
      begin
       t.not_instagram!(t["entities"]["media"][0]["media_url"].to_s)
-      puts t["entities"]["media"][0].inspect
-      rescue Exception =>ex
-	puts ex.inspect
-     end
+      rescue
+      end
      tweets << t
    end
    tweets

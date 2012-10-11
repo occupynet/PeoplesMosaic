@@ -81,6 +81,15 @@
     height:200px;
     width:600px;
   }
+  #campaign textarea {
+    height:100px;
+    width:360px;
+    margin-bottom:20px;
+  }
+  #campaign select {
+    margin-top:20px;
+    margin-bottom:20px;
+  }
 
   .tweet {
     padding:30px;
