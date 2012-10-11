@@ -340,10 +340,10 @@ class Term
     d = Time.at(self.campaign.end_timestamp).to_datetime
     #only do this if current time is before campaign.end_timestamp
     date_until = [d.year, d.month, ((d.day.to_i)+1).to_s].join('-').to_s
-     15.times do |p|
+     1.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>100, :page=>"2", :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
+         query = {:rpp=>200, :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
        rescue
          puts "bad gateway"
