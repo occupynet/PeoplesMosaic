@@ -52,9 +52,11 @@
                   =square["entities"]["media"][0]["media_url"]+(square.sizes? ? ":large" : "")
                 %div.content{:style=>"display:none"}
                   %div.user
-                    %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user
-                    %div.date
-                      %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str}= (Time.parse(square.created_at)).strftime("%I:%M%p %b %e, %Y")
+                    -begin
+                      %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user}="@"<<square.from_user
+                      %div.date
+                        %a{:target=>"_new", :href=>"http://twitter.com/#!/"<<square.from_user<<"/status/"<<square.id_str}= (Time.parse(square.created_at)).strftime("%I:%M%p %b %e, %Y")
+                    -rescue
                   %div.text
                     =square.text
             - if square["video_embed"] !=nil

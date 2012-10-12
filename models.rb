@@ -30,16 +30,16 @@ class Campaign
     @search_terms = Term.all({:conditions=>{:campaign_id=>self.id}})
     puts @search_terms.inspect
     @search_terms.each do |term|
-      puts term.inspect
       #get the tweets from the internet
       #do formatting, link expansion etc in this method
       #save the tweet
       tweets = term.crawl
       since_id = term.since_id
+      puts "got back from cralwer"
       tweets.each do |tweet|
+        puts tweet["text"]
         #does it conform to campaign settings (has media?)
         if tweet["entities"] && tweet["entities"]["media"]
-          puts tweet.inspect
           #build a campaingn tweet object
           ct = CampaignMedia.new
           ct.media_id = tweet.id_str
@@ -48,6 +48,7 @@ class Campaign
           #save it 
           ct.save!
           #and the aggreate table
+          puts "entities"
           puts tweet.entities.inspect
           url = tweet["entities"]["media"][0]["media_url"]
           v = {:media_url=>url,
@@ -59,7 +60,7 @@ class Campaign
           a.add_to_set(:campaign_id=>ct.campaign_id)
           a.add_to_set(:campaign_media_id=>ct.id)
           a.set(:score=>a.campaign_media_id.size)
-
+          puts a.inspect
         end
         since_id = tweet.id_str
       end
@@ -120,7 +121,7 @@ class CampaignMedia
       cm.each do |c|
         t = Tweet.first({:id_str=>c.media_id})
         begin
-          url = t['entities']['media'][0]['media_url']
+          url = t[:entities]['media'][0]['media_url']
           v = {:media_url=>url,
             :media_type=>c.media_type, 
             :ordering_key=>c.ordering_key,
@@ -187,7 +188,7 @@ class CampaignMedia
         id = url.split("twitter.com")[1].split("/")[4]
         a_tweet = Twitter.status(id).attrs
         self.media_type = 'twitter'
-        a.tweet['id_str'] = a_tweet['id'].to_s
+        a.tweet['id_str'] = a_tweet[:id].to_s
         a_tweet.id=nil
         Tweet.collection.update({:id_str=>a_tweet["id_str"].to_s},a_tweet, {:upsert => true})
         #now view the tweet
@@ -287,9 +288,9 @@ class Tweet
   
   def build_hashtag_array
     tags = []
-    if ( (! self.entities.empty?)  && self['entities']['hashtags'] !=nil)
-      self['entities']['hashtags'].each do |tag|
-        tags << tag['text']
+    if ( (! self.entities.empty?)  && self[:entities][:hashtags] !=nil)
+      self[:entities][:hashtags].each do |tag|
+        tags << tag[:text]
       end
     end
     self.ows_meta_tags = tags
@@ -299,11 +300,11 @@ class Tweet
   
   
   def expand_urls!
-    self['entities']['urls'].each do |url|
+    self[:entities][:urls].each do |url|
       begin 
-         url['expanded_url'].expand_urls!
+         url[:expanded_url].expand_urls!
        rescue NoMethodError
-         url['expanded_url'] = ''
+         url[:expanded_url] = ''
        end
     end
     self.save
@@ -343,70 +344,73 @@ class Term
      1.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>200, :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
+         query = {:rpp=>50, :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
-       rescue
+         puts "tweets found"
+         puts tweets.results.size
+       rescue Exception => ex
+         puts ex.inspect
          puts "bad gateway"
          sleep 30
          tweets = []
        end
        begin 
-         puts tweets.size
+         puts tweets.results.size
        rescue NoMethodError
          tweets = []
        end
-       if tweets.size==0
+       if tweets.results.size==0
          break
        end
          
-       tweets.each do | a_tweet |
+       tweets.results.each do | a_tweet |
          #add an integer timestamp
          begin 
-           a_tweet.attrs["timestamp"] = Time.parse(a_tweet.attrs["created_at"]).to_i
+           a_tweet.attrs["timestamp"] = Time.parse(a_tweet.attrs[:created_at]).to_i
          rescue NoMethodError
            a_tweet.attrs["timestamp"] = 1
          end
    
          #extract vids for embed code
-         if a_tweet.attrs["entities"]
-           if a_tweet.attrs["entities"]["urls"] !=nil
-           a_tweet.attrs["entities"]["urls"].each do |url|
+         if a_tweet.attrs[:entities]
+           if a_tweet.attrs[:entities][:urls] !=nil
+           a_tweet.attrs[:entities][:urls].each do |url|
              #corny method to traverse urls that have been encoded multiple times
              3.times do |x|
                begin 
-                 url["expanded_url"].expand_urls!
+                 url[:expanded_url].expand_urls!
                rescue NoMethodError
-                 url["expanded_url"] = ""
+                 url[:expanded_url] = ""
                end
              end
-             if url["expanded_url"].split("youtube.com").size >1 || url["expanded_url"].split("youtu.be").size > 1
+             if url[:expanded_url].split("youtube.com").size >1 || url[:expanded_url].split("youtu.be").size > 1
                client = YouTubeIt::Client.new(:dev_key => @devkey)
                begin 
-                 vid = client.video_by(url["expanded_url"])
+                 vid = client.video_by(url[:expanded_url])
                  a_tweet.attrs["video_embed"] = vid.embed_html
                rescue OpenURI::HTTPError => e
                
                end
              
              #vimeo 
-             elsif (url["expanded_url"].split("vimeo.com").size > 1)
-               video_id = url["expanded_url"].split("/").last
+             elsif (url[:expanded_url].split("vimeo.com").size > 1)
+               video_id = url[:expanded_url].split("/").last
                vid = Vimeo::Simple::Video.info(video_id)
                a_tweet.attrs["video_embed"] =  '<iframe src="http://player.vimeo.com/video/#{vid.id}" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>'
          
              #ht.ly is only used by porn spammers
-             elsif (url["expanded_url"].split("ht.ly").size > 1)
-               a_tweet.attrs["block"] =1
+             elsif (url[:expanded_url].split("ht.ly").size > 1)
+               a_tweet.attrs[:block] =1
              #manually grab instagrams for the thumbnail
-             elsif ((url["expanded_url"]).split("instagr.am").size > 1) || ((url["expanded_url"]).split("instagram.com").size > 1)
+             elsif ((url[:expanded_url]).split("instagr.am").size > 1) || ((url[:expanded_url]).split("instagram.com").size > 1)
                begin OpenURI::HTTPError
                #add the media link
                  html = ""
-                 open(url["expanded_url"]) {|f|
+                 open(url[:expanded_url]) {|f|
                    f.each_line {|line| html << line}
                  }
                 @html = Hpricot(html)
-                a_tweet.attrs["entities"]["media"] = [:media_url=>(@html/"img.photo")[0][:src] , :expanded_url=>  (@html/"img.photo")[0][:src],:size=>{:small=>{:h=>320}}]
+                a_tweet.attrs[:entities][:media] = [:media_url=>(@html/"img.photo")[0][:src] , :expanded_url=>  (@html/"img.photo")[0][:src],:size=>{:small=>{:h=>320}}]
                rescue 
                end
              end
@@ -415,17 +419,28 @@ class Term
          end
 
          #block this tweet if the user is in the blocked list
-         if @block[a_tweet.attrs["from_user_id"].to_s] !=nil
-           a_tweet.attrs["block"] = 1
+         if @block[a_tweet.attrs[:from_user_id].to_s] !=nil
+           a_tweet.attrs[:block] = 1
          end
          begin 
            #kill the twitter ID so we get a mongoID object instead
-           a_tweet.attrs['id'] = nil  
+           a_tweet.attrs[:id] = nil  
            #save / update
            #save all tweets, to mine them later
-           Tweet.collection.update({:id_str=>a_tweet.attrs["id_str"].to_s},a_tweet.attrs, {:upsert => true})
-           tweet =  Tweet.first({:id_str=>a_tweet.attrs["id_str"].to_s})
-           tweet.build_hashtag_array
+           puts "id_str"
+
+            puts a_tweet.attrs[:id_str]
+           Tweet.collection.update({:id_str=>a_tweet.attrs[:id_str].to_s},a_tweet.attrs, {:upsert => true})
+           puts "upsert"
+           tweet =  Tweet.first({:id_str=>a_tweet.attrs[:id_str].to_s})
+           puts tweet.inspect
+           puts "find again"
+           puts tweet["text"]
+           begin 
+             tweet.build_hashtag_array
+           rescue Exception => ex
+             puts ex.inspect
+           end
            @tweets << tweet
          rescue  
          end

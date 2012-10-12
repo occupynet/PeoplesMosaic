@@ -42,7 +42,8 @@
                 = square["video_embed"]
           -rescue
             %div.grid
-              could not find image
+              %span{:style=>'color:#ffffff'}
+                =square.inspect
         %div#infscr-loading
         %div#more 
           %a{:href=>"/admin/campaigns/page/"+@campaign['edit_link']+"/"+@page.to_s}=@page.to_s

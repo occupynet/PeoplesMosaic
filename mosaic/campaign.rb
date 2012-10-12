@@ -80,7 +80,7 @@ post '/campaigns/add_term/:edit_link' do
     @t.term = params[:term]
     @t.save!
   end
-  redirect '/campaigns/edit/' << @campaign.edit_link
+  redirect '/campaigns/edit/'<<@campaign.slug << '/' << @campaign.edit_link
 end
 
 get '/campaigns/remove_term/:edit_link/:term_id' do
@@ -89,7 +89,7 @@ get '/campaigns/remove_term/:edit_link/:term_id' do
     @term = Term.first({:campaign_id =>@campaign.id, :id=>params[:term_id]})
     @term.destroy
   end
-  redirect '/campaigns/edit/' << @campaign.edit_link
+  redirect '/campaigns/edit/'<<@campaign.slug << '/' << @campaign.edit_link
 end
 
 get '/campaigns/purge_term/:edit_link/:term' do
