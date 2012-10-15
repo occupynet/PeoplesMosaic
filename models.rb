@@ -344,7 +344,7 @@ class Term
      1.times do |p|
        begin 
          #campaign.since_id, campaign.end_date
-         query = {:rpp=>50, :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
+         query = {:count=>100, :since_id =>self.since_id, :until=>date_until,:include_entities=>true}
          tweets = Twitter.search(self.term.to_s + " -rt", query)
          puts "tweets found"
          puts tweets.results.size
