@@ -28,6 +28,7 @@ Remember to use the year-first format YYYY-MM-DD like "2011-09-17".
 
 When you create a campaign you will be taken to the edit page.  Copy the url for this page, and keep it safe. 
 You can share this URL with other members of your organization.  This url is the only way to access your campaign page - there's currently no login functionality.
+The lack of user authentication is a design decision intended to keep the application lightweight, and to keep groups using the app autonomous and not dependent on a class of superusers with privileged access.
 
 ===Updating and Rate-limiting
 
