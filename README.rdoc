@@ -1,4 +1,4 @@
-=PeoplesyMosaic
+=PeoplesMosaic
 
 This is an app for creating photo galleries based on pictures from Twitter hashtags.
 You can see a working implementaiton at http://mosaic.occupy.net
@@ -9,5 +9,25 @@ A group of hashtags is a "campaign".  You can create multiple campaigns, and eit
 
 There is no user authentication for administration.  Campaigns are created and administered by sharing a private URL.
 This was inspired by the open collaboration model used in etherpad. 
+
+
+==Creating and Editing a Campaign
+
+To create a campaign go to 
+http://yoursiteurl.org/campaigns/create
+
+This will bring up a form that will allow you to enter a name, description, and front-page image for a campaign.
+You can chose a theme for displaying images (currently there are 3)
+
+Search terms are the terms on Twitter (hashtags or other terms) that you want to collect images for.  
+The "#" symbol is optional. If your terms are specific enough, you may want to leave it off.  You can also search @replies.
+
+The date range is the range of time that you want the crawler to collect images.  
+Any date in the future is good.  You can select days in the past, but Twitter search only goes back about 10 days.
+Remember to use the year-first format YYYY-MM-DD like "2011-09-17".
+
+When you create a campaign you will be taken to the edit page.  Copy the url for this page, and keep it safe. 
+You can share this URL with other members of your organization.  This url is the only way to access your campaign page - there's currently no login functionality.
+
 
 
