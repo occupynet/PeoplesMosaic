@@ -1,71 +1,51 @@
-=OccupyMosaic
+=PeoplesMosaic
 
-==Tweet Crawler
-Mongo, Sinatra, maybe Resque for scheduling
-Workflow
-  Generate an edit link, etherpad style
-    Append this link to any view, and you are in edit mode
-  Name your mosaic, like "My S17 Adventures"
-  Add search terms for your mosaic
-  mosaic.occupy.net/terms/edit/fjo39jf90f3490fu09f09j09jfs
-    Term, Service
-    #S17, Twitter
-    #S17, Flickr
-    #Occupy, Instagram
-    text box with autocomplete
+This is an app for creating photo galleries based on pictures from Twitter hashtags.
+You can see a working implementaiton at http://mosaic.occupy.net
 
-  Set a span of time that you want the search terms to be active
-    calendar or date dropdowns
-  
-  Other things you can do
-    view your mosaic in edit mode
-      block a particular image
-      block a user (this would add their name to a block list and purge all existing images)
-    save individual tweets
-      enter a url to a tweet, and it gets added individually to your mosaic
-      follow users 
-        invite link is sent to a user
-        users can opt-in to have their photos pooled in a mosaic
-    
-  
-  
-  View your live mosaic in edit mode (with big random edit link)
-  mosaic.occupy.net/s17nyc/edit/fjo39jf90f3490fu09f09j09jfs
-    block certain images (irrelevant, inappropriate)
-    block users (porn spammers are especially a problem)
-    block certain keywords 
-  Write an about page for your mosaic 
-    Powered by notes.occupy.net via api
-  mosaic.occupy.net/s17nyc/about/
-  mosaic.occupy.net/s17nyc/about/edit/fjo39jf90f3490fu09f09j09jfs
+The app consists of 2 parts: the Twitter crawler and the web display.
 
-  Tweets are crawled every X minutes, depending on how many mosaics are active (350 total twitter API searches per hour)
+A group of hashtags is a "campaign".  You can create multiple campaigns, and either share them on the homepage or keep them private.
+
+There is no user authentication for administration.  Campaigns are created and administered by sharing a private URL.
+This was inspired by the open collaboration model used in etherpad. 
 
 
-==Mosaic Viewer 
-  This is what the people see.
-  
-  A menu of active mosaics
-    active mosaics are newest-first
-    
-  A menu of historic mosaics
-    historics are sorted oldest-first
-    
-  Infinite scroll thru photos
-    
-  
-  mosaic.occupy.net/s17nyc
-  mosaic.occupy.net/s17global
-  mosaic.occupy.net/occupyanniversary
-  
-===Another Sinatra App
-===For best results, run with Varnish
+==Creating and Editing a Campaign
 
+To create a campaign go to 
+http://yoursiteurl.org/campaigns/create
 
-==TODO
+This will bring up a form that will allow you to enter a name, description, and front-page image for a campaign.
+You can chose a theme for displaying images (currently there are 3)
 
-===Yfrog Support
-===Other photo service support
-===About pages thru Etherpad or whatever
+Search terms are the terms on Twitter (hashtags or other terms) that you want to collect images for.  
+The "#" symbol is optional. If your terms are specific enough, you may want to leave it off.  You can also search @replies.
 
+The date range is the range of time that you want the crawler to collect images.  
+Any date in the future is good.  You can select days in the past, but Twitter search only goes back about 10 days.
+Remember to use the year-first format YYYY-MM-DD like "2011-09-17".
+
+When you create a campaign you will be taken to the edit page.  Copy the url for this page, and keep it safe. 
+You can share this URL with other members of your organization.  This url is the only way to access your campaign page - there's currently no login functionality.
+The lack of user authentication is a design decision intended to keep the application lightweight, and to keep groups using the app autonomous and not dependent on a class of superusers with privileged access.
+
+===Updating and Rate-limiting
+
+When you create a campaign, it's placed in a queue with all of the other active campaigns on your site.  
+Due to Twitter's rate-limiting of searches, the mosaic app can only make about 300 searches per hour.  
+This is per page of search results, so one refresh of a campaign can use up to 10 individual search requests. 
+Because of this rate-limiting, your campaign images may only update a few times per hour.  
+For extremely popular hashtags, not all search results will be returned - the app is meant to provide a quick overview of a situation, not a comprehensive archive.
+
+==Installation
+
+===Dependencies
+Ruby ~ 1.9
+Sinatra
+
+MongoDB
+
+isotope.js
+jquery
 
