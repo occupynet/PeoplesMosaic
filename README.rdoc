@@ -37,4 +37,14 @@ This is per page of search results, so one refresh of a campaign can use up to 1
 Because of this rate-limiting, your campaign images may only update a few times per hour.  
 For extremely popular hashtags, not all search results will be returned - the app is meant to provide a quick overview of a situation, not a comprehensive archive.
 
+==Installation
+
+===Dependencies
+Ruby ~ 1.9
+Sinatra
+
+MongoDB
+
+isotope.js
+jquery
 
