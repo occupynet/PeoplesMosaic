@@ -359,10 +359,13 @@ class Term
        rescue NoMethodError
          tweets = []
        end
-       if tweets.results.size==0
+ 	begin
+       if  tweets.results.size==0
          break
        end
-         
+         rescue 
+	  break
+	end
        tweets.results.each do | a_tweet |
          #add an integer timestamp
          begin 
