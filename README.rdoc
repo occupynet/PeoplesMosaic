@@ -1,71 +1,13 @@
-=OccupyMosaic
+=PeoplesyMosaic
 
-==Tweet Crawler
-Mongo, Sinatra, maybe Resque for scheduling
-Workflow
-  Generate an edit link, etherpad style
-    Append this link to any view, and you are in edit mode
-  Name your mosaic, like "My S17 Adventures"
-  Add search terms for your mosaic
-  mosaic.occupy.net/terms/edit/fjo39jf90f3490fu09f09j09jfs
-    Term, Service
-    #S17, Twitter
-    #S17, Flickr
-    #Occupy, Instagram
-    text box with autocomplete
+This is an app for creating photo galleries based on pictures from Twitter hashtags.
+You can see a working implementaiton at http://mosaic.occupy.net
 
-  Set a span of time that you want the search terms to be active
-    calendar or date dropdowns
-  
-  Other things you can do
-    view your mosaic in edit mode
-      block a particular image
-      block a user (this would add their name to a block list and purge all existing images)
-    save individual tweets
-      enter a url to a tweet, and it gets added individually to your mosaic
-      follow users 
-        invite link is sent to a user
-        users can opt-in to have their photos pooled in a mosaic
-    
-  
-  
-  View your live mosaic in edit mode (with big random edit link)
-  mosaic.occupy.net/s17nyc/edit/fjo39jf90f3490fu09f09j09jfs
-    block certain images (irrelevant, inappropriate)
-    block users (porn spammers are especially a problem)
-    block certain keywords 
-  Write an about page for your mosaic 
-    Powered by notes.occupy.net via api
-  mosaic.occupy.net/s17nyc/about/
-  mosaic.occupy.net/s17nyc/about/edit/fjo39jf90f3490fu09f09j09jfs
+The app consists of 2 parts: the Twitter crawler and the web display.
 
-  Tweets are crawled every X minutes, depending on how many mosaics are active (350 total twitter API searches per hour)
+A group of hashtags is a "campaign".  You can create multiple campaigns, and either share them on the homepage or keep them private.
 
-
-==Mosaic Viewer 
-  This is what the people see.
-  
-  A menu of active mosaics
-    active mosaics are newest-first
-    
-  A menu of historic mosaics
-    historics are sorted oldest-first
-    
-  Infinite scroll thru photos
-    
-  
-  mosaic.occupy.net/s17nyc
-  mosaic.occupy.net/s17global
-  mosaic.occupy.net/occupyanniversary
-  
-===Another Sinatra App
-===For best results, run with Varnish
-
-
-==TODO
-
-===Yfrog Support
-===Other photo service support
-===About pages thru Etherpad or whatever
+There is no user authentication for administration.  Campaigns are created and administered by sharing a private URL.
+This was inspired by the open collaboration model used in etherpad. 
 
 
